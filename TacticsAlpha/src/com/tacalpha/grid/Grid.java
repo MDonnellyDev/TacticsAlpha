@@ -5,15 +5,15 @@ public class Grid {
 	public final int width;
 	public final int height;
 
-	private int selectedX;
-	private int selectedY;
+	private int currentXPosition;
+	private int currentYPosition;
 
 	public Grid(int width, int height) {
 		this.width = width;
 		this.height = height;
 		this.tiles = new Tile[height][width];
-		this.selectedX = 0;
-		this.selectedY = 0;
+		this.currentXPosition = 0;
+		this.currentYPosition = 0;
 	}
 
 	public Grid(String mapFile) {
@@ -22,19 +22,19 @@ public class Grid {
 		this.width = this.tiles[0].length;
 	}
 
-	public void moveSelected(Direction direction) {
+	public void moveSelectedLocation(Direction direction) {
 		switch (direction) {
 			case UP:
-				this.selectedY = Math.max(0, this.selectedY - 1);
+				this.currentYPosition = Math.max(0, this.currentYPosition - 1);
 				break;
 			case DOWN:
-				this.selectedY = Math.min(this.height - 1, this.selectedY + 1);
+				this.currentYPosition = Math.min(this.height - 1, this.currentYPosition + 1);
 				break;
 			case LEFT:
-				this.selectedX = Math.max(0, this.selectedX - 1);
+				this.currentXPosition = Math.max(0, this.currentXPosition - 1);
 				break;
 			case RIGHT:
-				this.selectedX = Math.min(this.width - 1, this.selectedX + 1);
+				this.currentXPosition = Math.min(this.width - 1, this.currentXPosition + 1);
 				break;
 			default:
 				break;
@@ -42,7 +42,7 @@ public class Grid {
 	}
 
 	public GridPoint getSelectedLocation() {
-		return new GridPoint(this.selectedX, this.selectedY);
+		return new GridPoint(this.currentXPosition, this.currentYPosition);
 	}
 
 	public Tile[][] getTiles() {

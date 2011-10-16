@@ -6,7 +6,17 @@ import com.tacalpha.grid.Direction;
 import com.tacalpha.grid.Grid;
 
 public class Game {
+	// Static constants
+	private static final int GRID_HOLD_TIMER = 10;
+
+	// Input
 	private boolean[] previousKeyState = new boolean[65535];
+	private InputHelper upHelper = new InputHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
+	private InputHelper downHelper = new InputHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
+	private InputHelper leftHelper = new InputHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
+	private InputHelper rightHelper = new InputHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
+
+	// Game logic
 	private Grid grid;
 
 	public Game() {
@@ -15,19 +25,19 @@ public class Game {
 	}
 
 	public void update(boolean[] keyStates) {
-		boolean up = keyStates[KeyEvent.VK_UP] && !this.previousKeyState[KeyEvent.VK_UP];
-		boolean down = keyStates[KeyEvent.VK_DOWN] && !this.previousKeyState[KeyEvent.VK_DOWN];
-		boolean left = keyStates[KeyEvent.VK_LEFT] && !this.previousKeyState[KeyEvent.VK_LEFT];
-		boolean right = keyStates[KeyEvent.VK_RIGHT] && !this.previousKeyState[KeyEvent.VK_RIGHT];
+		boolean up = this.upHelper.state(keyStates[KeyEvent.VK_UP]);
+		boolean down = this.downHelper.state(keyStates[KeyEvent.VK_DOWN]);
+		boolean left = this.leftHelper.state(keyStates[KeyEvent.VK_LEFT]);
+		boolean right = this.rightHelper.state(keyStates[KeyEvent.VK_RIGHT]);
 
 		if (up) {
-			this.grid.moveSelected(Direction.UP);
+			this.grid.moveSelectedLocation(Direction.UP);
 		} else if (down) {
-			this.grid.moveSelected(Direction.DOWN);
+			this.grid.moveSelectedLocation(Direction.DOWN);
 		} else if (left) {
-			this.grid.moveSelected(Direction.LEFT);
+			this.grid.moveSelectedLocation(Direction.LEFT);
 		} else if (right) {
-			this.grid.moveSelected(Direction.RIGHT);
+			this.grid.moveSelectedLocation(Direction.RIGHT);
 		}
 
 		this.copyPreviousInput(keyStates);

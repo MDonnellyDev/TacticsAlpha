@@ -17,8 +17,8 @@ import com.tacalpha.graphics.ScreenRenderer;
 public class GameRunner extends Canvas implements Runnable {
 	private static final long serialVersionUID = -7093576847463991329L;
 
-	private static final int WIDTH = 1024;
-	private static final int HEIGHT = 768;
+	public static final int WIDTH = 1024;
+	public static final int HEIGHT = 768;
 
 	private Game game;
 
