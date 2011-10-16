@@ -25,16 +25,28 @@ public class Grid {
 	public void moveSelectedLocation(Direction direction) {
 		switch (direction) {
 			case UP:
-				this.currentYPosition = Math.max(0, this.currentYPosition - 1);
+				this.currentYPosition--;
+				if (this.currentYPosition < 0) {
+					this.currentYPosition = this.height - 1;
+				}
 				break;
 			case DOWN:
-				this.currentYPosition = Math.min(this.height - 1, this.currentYPosition + 1);
+				this.currentYPosition++;
+				if (this.currentYPosition >= this.height) {
+					this.currentYPosition = 0;
+				}
 				break;
 			case LEFT:
-				this.currentXPosition = Math.max(0, this.currentXPosition - 1);
+				this.currentXPosition--;
+				if (this.currentXPosition < 0) {
+					this.currentXPosition = this.width - 1;
+				}
 				break;
 			case RIGHT:
-				this.currentXPosition = Math.min(this.width - 1, this.currentXPosition + 1);
+				this.currentXPosition++;
+				if (this.currentXPosition >= this.width) {
+					this.currentXPosition = 0;
+				}
 				break;
 			default:
 				break;
