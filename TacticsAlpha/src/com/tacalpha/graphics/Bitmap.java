@@ -118,4 +118,8 @@ public class Bitmap {
 		}
 	}
 
+	public void fill(Rectangle rec, int color) {
+		this.fill(rec.left, rec.top, rec.right, rec.bottom, color);
+	}
+
 }

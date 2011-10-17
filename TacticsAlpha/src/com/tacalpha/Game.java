@@ -11,10 +11,10 @@ public class Game {
 
 	// Input
 	private boolean[] previousKeyState = new boolean[65535];
-	private InputHelper upHelper = new InputHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
-	private InputHelper downHelper = new InputHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
-	private InputHelper leftHelper = new InputHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
-	private InputHelper rightHelper = new InputHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
+	private InputRepeatHelper upHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
+	private InputRepeatHelper downHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
+	private InputRepeatHelper leftHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
+	private InputRepeatHelper rightHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
 
 	// Game logic
 	private Grid grid;

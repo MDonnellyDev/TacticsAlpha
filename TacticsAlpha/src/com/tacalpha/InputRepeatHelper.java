@@ -1,11 +1,11 @@
 package com.tacalpha;
 
-public class InputHelper {
+public class InputRepeatHelper {
 	private int initialDelay;
 	private int repeatDelay;
 	private int ticksHeld = 0;
 
-	public InputHelper(int initialDelay, int repeatDelay) {
+	public InputRepeatHelper(int initialDelay, int repeatDelay) {
 		this.initialDelay = initialDelay;
 		this.repeatDelay = repeatDelay;
 	}
