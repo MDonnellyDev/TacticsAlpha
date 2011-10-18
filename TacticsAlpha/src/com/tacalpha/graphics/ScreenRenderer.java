@@ -12,38 +12,44 @@ import com.tacalpha.actor.Actor;
 import com.tacalpha.grid.Grid;
 import com.tacalpha.grid.GridPoint;
 import com.tacalpha.grid.Tile;
+import com.tacalpha.menu.Menu;
 
 public class ScreenRenderer extends Component {
-	private int tileSize = 50;
-	private int gridX = 0;
-	private int gridY = 0;
+	// Generic
 	private Graphics2D graphics2D;
 	private BufferedImage image;
+
+	// BATTLE Screen
+	private int tileSize;
+	private Rectangle gridSpace;
+	private Rectangle menuSpace;
 
 	public ScreenRenderer(int width, int height) {
 		this.setImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB));
 		this.graphics2D = this.getImage().createGraphics();
+		// The grid should take up the top 2/3 of the screen.
+		this.gridSpace = new Rectangle(0, 0, GameRunner.WIDTH, GameRunner.HEIGHT * 2 / 3);
+		this.menuSpace = new Rectangle(0, this.gridSpace.bottom + 1, GameRunner.WIDTH, GameRunner.HEIGHT);
+		this.tileSize = 50;
 	}
 
 	public void render(Game game, boolean hasFocus) {
 		Grid grid = game.getGrid();
 		Collection<Actor> actors = game.getActors();
+		Menu menu = game.getActiveMenu();
 
-		// Scale the grid to fit on the screen and center it.
 		// TODO: I don't like the class fields here. There has to be a better
 		// way.
-		this.tileSize = Math.min(GameRunner.HEIGHT / grid.height, GameRunner.WIDTH / grid.width);
-		this.gridX = (GameRunner.WIDTH - (this.tileSize * grid.width)) / 2;
-		this.gridY = (GameRunner.HEIGHT - (this.tileSize * grid.height)) / 2;
+		this.tileSize = Math.min(this.gridSpace.height / grid.height, this.gridSpace.width / grid.width);
 
 		this.renderGrid(grid);
 		// TODO: Make this take some actors.
 		this.renderActors(actors);
+		this.renderMenu(menu);
 	}
 
 	private void renderGrid(Grid grid) {
-		this.graphics2D.setColor(Color.BLACK);
-		this.graphics2D.fillRect(0, 0, this.gridX, this.gridY);
+		this.fill(this.gridSpace, Color.BLACK);
 		Tile[][] tiles = grid.getTiles();
 		GridPoint selectedLocation = grid.getSelectedLocation();
 		for (int y = 0; y < grid.height; y++) {
@@ -65,6 +71,10 @@ public class ScreenRenderer extends Component {
 		}
 	}
 
+	private void renderMenu(Menu menu) {
+		this.fill(this.menuSpace, Color.GRAY);
+	}
+
 	private void fill(Rectangle rect, Color color) {
 		this.graphics2D.setColor(color);
 		this.graphics2D.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
@@ -72,8 +82,9 @@ public class ScreenRenderer extends Component {
 
 	private Rectangle getTileRectangle(int x, int y) {
 		int tileSizeReduction = 1;
-		return new Rectangle(this.gridX + (x * this.tileSize) + tileSizeReduction, this.gridY + (y * this.tileSize) + tileSizeReduction, this.gridX
-				+ (x * this.tileSize) + (this.tileSize - tileSizeReduction), this.gridY + (y * this.tileSize) + (this.tileSize - tileSizeReduction));
+		return new Rectangle(this.gridSpace.left + (x * this.tileSize) + tileSizeReduction, this.gridSpace.top + (y * this.tileSize) + tileSizeReduction,
+				this.gridSpace.left + (x * this.tileSize) + (this.tileSize - tileSizeReduction), this.gridSpace.top + (y * this.tileSize)
+						+ (this.tileSize - tileSizeReduction));
 	}
 
 	private Rectangle getActorRectangle(int x, int y) {
@@ -81,12 +92,9 @@ public class ScreenRenderer extends Component {
 		while (this.tileSize - (actorSizeReduction * 2) < 0) {
 			actorSizeReduction--;
 		}
-		return new Rectangle(this.gridX + (x * this.tileSize) + actorSizeReduction, this.gridY + (y * this.tileSize) + actorSizeReduction, this.gridX
-				+ (x * this.tileSize) + (this.tileSize - actorSizeReduction), this.gridY + (y * this.tileSize) + (this.tileSize - actorSizeReduction));
-	}
-
-	private Rectangle getGridRectangle(Grid grid) {
-		return new Rectangle(this.gridX, this.gridY, this.gridX + (grid.width) * this.tileSize, this.gridY + (grid.height) * this.tileSize);
+		return new Rectangle(this.gridSpace.left + (x * this.tileSize) + actorSizeReduction, this.gridSpace.top + (y * this.tileSize) + actorSizeReduction,
+				this.gridSpace.left + (x * this.tileSize) + (this.tileSize - actorSizeReduction), this.gridSpace.top + (y * this.tileSize)
+						+ (this.tileSize - actorSizeReduction));
 	}
 
 	public void setImage(BufferedImage image) {

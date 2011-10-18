@@ -11,6 +11,7 @@ import com.tacalpha.grid.Grid;
 import com.tacalpha.input.InputHelper;
 import com.tacalpha.input.InputRepeatHelper;
 import com.tacalpha.input.InputSinglePressHelper;
+import com.tacalpha.menu.Menu;
 
 public class Game {
 	// Static constants
@@ -27,6 +28,7 @@ public class Game {
 	private Grid grid;
 	private List<Actor> actors;
 	private Actor currentActor;
+	private Menu activeMenu;
 
 	public Game() {
 		// TODO: Temporary testing code.
@@ -38,6 +40,7 @@ public class Game {
 			this.grid.addActorToGrid(actor, actor.getLocation());
 		}
 		this.currentActor = null;
+		this.activeMenu = null;
 	}
 
 	public void update(boolean[] keyStates) {
@@ -74,5 +77,9 @@ public class Game {
 
 	public Collection<Actor> getActors() {
 		return this.actors;
+	}
+
+	public Menu getActiveMenu() {
+		return this.activeMenu;
 	}
 }
