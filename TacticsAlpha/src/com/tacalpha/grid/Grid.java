@@ -1,5 +1,7 @@
 package com.tacalpha.grid;
 
+import com.tacalpha.actor.Actor;
+
 public class Grid {
 	private final Tile[][] tiles;
 	public final int width;
@@ -59,5 +61,34 @@ public class Grid {
 
 	public Tile[][] getTiles() {
 		return this.tiles;
+	}
+
+	public boolean moveActorIfPossible(Actor actor, GridPoint destination) {
+		int x = destination.getColumn();
+		int y = destination.getRow();
+		if (y < 0 || y >= this.height || x < 0 || x >= this.width) {
+			return false;
+		}
+		Tile currentTile = this.tiles[y][x];
+		if (currentTile.isImpassable()) {
+			return false;
+		}
+		if (currentTile.getOccupant() == null) {
+			GridPoint oldLocation = actor.getLocation();
+			Tile oldTile = this.tiles[oldLocation.getRow()][oldLocation.getColumn()];
+			oldTile.setOccupant(null);
+			currentTile.setOccupant(actor);
+			actor.updateLocation(x, y);
+			return true;
+		}
+		return false;
+	}
+
+	public void addActorToGrid(Actor actor, GridPoint destination) {
+		this.tiles[destination.getRow()][destination.getColumn()].setOccupant(actor);
+	}
+
+	public Actor getActor(GridPoint location) {
+		return this.tiles[location.getRow()][location.getColumn()].getOccupant();
 	}
 }

@@ -4,9 +4,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 
 import com.tacalpha.Game;
 import com.tacalpha.GameRunner;
+import com.tacalpha.actor.Actor;
 import com.tacalpha.grid.Grid;
 import com.tacalpha.grid.GridPoint;
 import com.tacalpha.grid.Tile;
@@ -25,6 +27,7 @@ public class ScreenRenderer extends Component {
 
 	public void render(Game game, boolean hasFocus) {
 		Grid grid = game.getGrid();
+		Collection<Actor> actors = game.getActors();
 
 		// Scale the grid to fit on the screen and center it.
 		// TODO: I don't like the class fields here. There has to be a better
@@ -35,7 +38,7 @@ public class ScreenRenderer extends Component {
 
 		this.renderGrid(grid);
 		// TODO: Make this take some actors.
-		this.renderActors();
+		this.renderActors(actors);
 	}
 
 	private void renderGrid(Grid grid) {
@@ -45,7 +48,8 @@ public class ScreenRenderer extends Component {
 		GridPoint selectedLocation = grid.getSelectedLocation();
 		for (int y = 0; y < grid.height; y++) {
 			for (int x = 0; x < grid.width; x++) {
-				Color color = tiles[y][x].isImpassable() ? Color.DARK_GRAY : Color.LIGHT_GRAY;
+				Tile tile = tiles[y][x];
+				Color color = tile.isImpassable() ? Color.DARK_GRAY : Color.LIGHT_GRAY;
 				if (selectedLocation.matches(x, y)) {
 					color = Color.BLUE;
 				}
@@ -54,10 +58,11 @@ public class ScreenRenderer extends Component {
 		}
 	}
 
-	private void renderActors() {
-		// TODO: Temporary testing code.
-		this.fill(this.getActorRectangle(0, 0), Color.GREEN);
-		this.fill(this.getActorRectangle(2, 3), Color.YELLOW);
+	private void renderActors(Collection<Actor> actors) {
+		for (Actor actor : actors) {
+			GridPoint actorLocation = actor.getLocation();
+			this.fill(this.getActorRectangle(actorLocation.getColumn(), actorLocation.getRow()), Color.YELLOW);
+		}
 	}
 
 	private void fill(Rectangle rect, Color color) {

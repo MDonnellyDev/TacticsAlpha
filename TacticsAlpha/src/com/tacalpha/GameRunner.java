@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.tacalpha.graphics.ScreenRenderer;
+import com.tacalpha.input.InputHandler;
 
 public class GameRunner extends Canvas implements Runnable {
 	private static final long serialVersionUID = -7093576847463991329L;

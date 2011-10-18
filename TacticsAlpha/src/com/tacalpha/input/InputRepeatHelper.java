@@ -1,6 +1,6 @@
-package com.tacalpha;
+package com.tacalpha.input;
 
-public class InputRepeatHelper {
+public class InputRepeatHelper implements InputHelper {
 	private int initialDelay;
 	private int repeatDelay;
 	private int ticksHeld = 0;
@@ -10,6 +10,7 @@ public class InputRepeatHelper {
 		this.repeatDelay = repeatDelay;
 	}
 
+	@Override
 	public boolean state(boolean currentState) {
 		if (!currentState) {
 			this.ticksHeld = 0;
