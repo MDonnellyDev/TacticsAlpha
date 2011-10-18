@@ -10,7 +10,6 @@ public class Game {
 	private static final int GRID_HOLD_TIMER = 10;
 
 	// Input
-	private boolean[] previousKeyState = new boolean[65535];
 	private InputRepeatHelper upHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
 	private InputRepeatHelper downHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
 	private InputRepeatHelper leftHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
@@ -39,19 +38,11 @@ public class Game {
 		} else if (right) {
 			this.grid.moveSelectedLocation(Direction.RIGHT);
 		}
-
-		this.copyPreviousInput(keyStates);
 	}
 
 	// TODO: Remove this method. We should be returning an entire scene for the
 	// ScreenRenderer to parse instead.
 	public Grid getGrid() {
 		return this.grid;
-	}
-
-	private void copyPreviousInput(boolean[] newInput) {
-		for (int i = 0; i < newInput.length; i++) {
-			this.previousKeyState[i] = newInput[i];
-		}
 	}
 }
