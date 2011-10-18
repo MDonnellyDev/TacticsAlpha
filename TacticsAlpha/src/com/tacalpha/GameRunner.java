@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -38,9 +37,6 @@ public class GameRunner extends Canvas implements Runnable {
 
 		this.game = new Game();
 		this.screen = new ScreenRenderer(GameRunner.WIDTH, GameRunner.HEIGHT);
-
-		this.image = new BufferedImage(GameRunner.WIDTH, GameRunner.HEIGHT, BufferedImage.TYPE_INT_RGB);
-		this.pixels = ((DataBufferInt) this.image.getRaster().getDataBuffer()).getData();
 
 		this.inputHandler = new InputHandler();
 
@@ -104,13 +100,9 @@ public class GameRunner extends Canvas implements Runnable {
 
 		this.screen.render(this.game, this.hasFocus());
 
-		for (int i = 0; i < GameRunner.WIDTH * GameRunner.HEIGHT; i++) {
-			this.pixels[i] = this.screen.pixels[i];
-		}
-
 		Graphics graphics = bufferStrategy.getDrawGraphics();
 		graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
-		graphics.drawImage(this.image, 0, 0, GameRunner.WIDTH, GameRunner.HEIGHT, null);
+		graphics.drawImage(this.screen.getImage(), 0, 0, GameRunner.WIDTH, GameRunner.HEIGHT, null);
 		graphics.dispose();
 		bufferStrategy.show();
 	}
@@ -142,6 +134,7 @@ public class GameRunner extends Canvas implements Runnable {
 		JFrame frame = new JFrame("Tactics Alpha");
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(runner);
+		// panel.add(runner.screen);
 
 		frame.setContentPane(panel);
 		frame.setSize(GameRunner.WIDTH, GameRunner.HEIGHT);

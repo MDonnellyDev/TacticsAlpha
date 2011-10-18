@@ -1,18 +1,26 @@
 package com.tacalpha.graphics;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
 import com.tacalpha.Game;
 import com.tacalpha.GameRunner;
 import com.tacalpha.grid.Grid;
 import com.tacalpha.grid.GridPoint;
 import com.tacalpha.grid.Tile;
 
-public class ScreenRenderer extends Bitmap {
+public class ScreenRenderer extends Component {
 	private int tileSize = 50;
 	private int gridX = 0;
 	private int gridY = 0;
+	private Graphics2D graphics2D;
+	private BufferedImage image;
 
 	public ScreenRenderer(int width, int height) {
-		super(width, height);
+		this.setImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB));
+		this.graphics2D = this.getImage().createGraphics();
 	}
 
 	public void render(Game game, boolean hasFocus) {
@@ -26,47 +34,43 @@ public class ScreenRenderer extends Bitmap {
 		this.gridY = (GameRunner.HEIGHT - (this.tileSize * grid.height)) / 2;
 
 		this.renderGrid(grid);
-		// TODO: This should take some actors.
-		this.renderActors();
 	}
 
 	private void renderGrid(Grid grid) {
-		this.fill(this.getGridLocation(grid), 0x000000);
+		this.graphics2D.setColor(Color.BLACK);
+		this.graphics2D.fillRect(0, 0, this.gridX, this.gridY);
 		Tile[][] tiles = grid.getTiles();
 		GridPoint selectedLocation = grid.getSelectedLocation();
 		for (int y = 0; y < grid.height; y++) {
 			for (int x = 0; x < grid.width; x++) {
-				int color = tiles[y][x].isImpassable() ? 0x333333 : 0x00ffff;
+				Color color = tiles[y][x].isImpassable() ? Color.DARK_GRAY : Color.LIGHT_GRAY;
 				if (selectedLocation.matches(x, y)) {
-					color = color & 0xaaaaaa;
+					color = Color.BLUE;
 				}
-				this.fill(this.getTileLocation(x, y), color);
+				this.fill(this.getTileRectangle(x, y), color);
 			}
 		}
 	}
 
-	private void renderActors() {
-		// TODO: Temporary testing code.
-		this.fill(this.getActorLocation(0, 0), 0xffff00);
-		this.fill(this.getActorLocation(2, 3), 0xccccff);
+	private void fill(Rectangle rect, Color color) {
+		this.graphics2D.setColor(color);
+		this.graphics2D.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 	}
 
-	private Rectangle getTileLocation(int x, int y) {
-		int tileSizeReduction = 1;
-		return new Rectangle(this.gridX + (x * this.tileSize) + tileSizeReduction, this.gridY + (y * this.tileSize) + tileSizeReduction, this.gridX
-				+ (x * this.tileSize) + (this.tileSize - tileSizeReduction), this.gridY + (y * this.tileSize) + (this.tileSize - tileSizeReduction));
+	private Rectangle getTileRectangle(int x, int y) {
+		return new Rectangle(this.gridX + (x * this.tileSize) + 1, this.gridY + (y * this.tileSize) + 1,
+				this.gridX + (x * this.tileSize) + (this.tileSize - 1), this.gridY + (y * this.tileSize) + (this.tileSize - 1));
 	}
 
-	private Rectangle getActorLocation(int x, int y) {
-		int actorSizeReduction = 5;
-		while (this.tileSize - (actorSizeReduction * 2) < 0) {
-			actorSizeReduction--;
-		}
-		return new Rectangle(this.gridX + (x * this.tileSize) + actorSizeReduction, this.gridY + (y * this.tileSize) + actorSizeReduction, this.gridX
-				+ (x * this.tileSize) + (this.tileSize - actorSizeReduction), this.gridY + (y * this.tileSize) + (this.tileSize - actorSizeReduction));
-	}
-
-	private Rectangle getGridLocation(Grid grid) {
+	private Rectangle getGridRectangle(Grid grid) {
 		return new Rectangle(this.gridX, this.gridY, this.gridX + (grid.width) * this.tileSize, this.gridY + (grid.height) * this.tileSize);
+	}
+
+	public void setImage(BufferedImage image) {
+		this.image = image;
+	}
+
+	public BufferedImage getImage() {
+		return this.image;
 	}
 }
