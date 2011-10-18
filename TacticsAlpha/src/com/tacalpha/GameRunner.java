@@ -98,7 +98,7 @@ public class GameRunner extends Canvas implements Runnable {
 	private void render() {
 		BufferStrategy bufferStrategy = this.getBufferStrategy();
 		if (bufferStrategy == null) {
-			this.createBufferStrategy(2);
+			this.createBufferStrategy(3);
 			return;
 		}
 
@@ -110,7 +110,7 @@ public class GameRunner extends Canvas implements Runnable {
 
 		Graphics graphics = bufferStrategy.getDrawGraphics();
 		// TODO: Why is this visible on the right and bottom of the screen?
-		graphics.fillRect(0, 0, this.getWidth() - 10, this.getHeight());
+		graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
 		graphics.drawImage(this.image, 0, 0, GameRunner.WIDTH, GameRunner.HEIGHT, null);
 		graphics.dispose();
 		bufferStrategy.show();
