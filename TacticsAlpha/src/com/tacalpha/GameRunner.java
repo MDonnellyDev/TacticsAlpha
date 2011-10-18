@@ -145,7 +145,7 @@ public class GameRunner extends Canvas implements Runnable {
 		panel.add(runner);
 
 		frame.setContentPane(panel);
-		frame.setSize(1024, 768);
+		frame.setSize(GameRunner.WIDTH, GameRunner.HEIGHT);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
