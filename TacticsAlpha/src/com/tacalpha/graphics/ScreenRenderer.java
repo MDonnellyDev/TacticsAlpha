@@ -34,6 +34,8 @@ public class ScreenRenderer extends Component {
 		this.gridY = (GameRunner.HEIGHT - (this.tileSize * grid.height)) / 2;
 
 		this.renderGrid(grid);
+		// TODO: Make this take some actors.
+		this.renderActors();
 	}
 
 	private void renderGrid(Grid grid) {
@@ -52,14 +54,30 @@ public class ScreenRenderer extends Component {
 		}
 	}
 
+	private void renderActors() {
+		// TODO: Temporary testing code.
+		this.fill(this.getActorRectangle(0, 0), Color.GREEN);
+		this.fill(this.getActorRectangle(2, 3), Color.YELLOW);
+	}
+
 	private void fill(Rectangle rect, Color color) {
 		this.graphics2D.setColor(color);
 		this.graphics2D.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 	}
 
 	private Rectangle getTileRectangle(int x, int y) {
-		return new Rectangle(this.gridX + (x * this.tileSize) + 1, this.gridY + (y * this.tileSize) + 1,
-				this.gridX + (x * this.tileSize) + (this.tileSize - 1), this.gridY + (y * this.tileSize) + (this.tileSize - 1));
+		int tileSizeReduction = 1;
+		return new Rectangle(this.gridX + (x * this.tileSize) + tileSizeReduction, this.gridY + (y * this.tileSize) + tileSizeReduction, this.gridX
+				+ (x * this.tileSize) + (this.tileSize - tileSizeReduction), this.gridY + (y * this.tileSize) + (this.tileSize - tileSizeReduction));
+	}
+
+	private Rectangle getActorRectangle(int x, int y) {
+		int actorSizeReduction = 5;
+		while (this.tileSize - (actorSizeReduction * 2) < 0) {
+			actorSizeReduction--;
+		}
+		return new Rectangle(this.gridX + (x * this.tileSize) + actorSizeReduction, this.gridY + (y * this.tileSize) + actorSizeReduction, this.gridX
+				+ (x * this.tileSize) + (this.tileSize - actorSizeReduction), this.gridY + (y * this.tileSize) + (this.tileSize - actorSizeReduction));
 	}
 
 	private Rectangle getGridRectangle(Grid grid) {
