@@ -3,7 +3,6 @@ package com.tacalpha.graphics;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import com.tacalpha.Game;
@@ -48,8 +47,7 @@ public class ScreenRenderer extends Component {
 				if (selectedLocation.matches(x, y)) {
 					color = Color.BLUE;
 				}
-				this.graphics2D.setColor(color);
-				this.graphics2D.fill(new Rectangle2D.Double(this.getTileOffsetX(x), this.getTileOffsetY(y), this.tileSize, this.tileSize));
+				this.fill(this.getTileRectangle(x, y), color);
 			}
 		}
 	}
@@ -59,20 +57,12 @@ public class ScreenRenderer extends Component {
 		this.graphics2D.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 	}
 
-	private Rectangle getTileLocation(int x, int y) {
+	private Rectangle getTileRectangle(int x, int y) {
 		return new Rectangle(this.gridX + (x * this.tileSize) + 1, this.gridY + (y * this.tileSize) + 1,
 				this.gridX + (x * this.tileSize) + (this.tileSize - 1), this.gridY + (y * this.tileSize) + (this.tileSize - 1));
 	}
 
-	private int getTileOffsetX(int x) {
-		return this.gridX + (x * this.tileSize) + 1;
-	}
-
-	private int getTileOffsetY(int y) {
-		return this.gridY + (y * this.tileSize) + 1;
-	}
-
-	private Rectangle getGridLocation(Grid grid) {
+	private Rectangle getGridRectangle(Grid grid) {
 		return new Rectangle(this.gridX, this.gridY, this.gridX + (grid.width) * this.tileSize, this.gridY + (grid.height) * this.tileSize);
 	}
 
