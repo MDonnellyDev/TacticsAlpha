@@ -2,7 +2,6 @@ package com.tacalpha;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
@@ -99,7 +98,7 @@ public class GameRunner extends Canvas implements Runnable {
 	private void render() {
 		BufferStrategy bufferStrategy = this.getBufferStrategy();
 		if (bufferStrategy == null) {
-			this.createBufferStrategy(3);
+			this.createBufferStrategy(2);
 			return;
 		}
 
@@ -111,8 +110,7 @@ public class GameRunner extends Canvas implements Runnable {
 
 		Graphics graphics = bufferStrategy.getDrawGraphics();
 		// TODO: Why is this visible on the right and bottom of the screen?
-		graphics.setColor(Color.PINK);
-		graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
+		graphics.fillRect(0, 0, this.getWidth() - 10, this.getHeight());
 		graphics.drawImage(this.image, 0, 0, GameRunner.WIDTH, GameRunner.HEIGHT, null);
 		graphics.dispose();
 		bufferStrategy.show();
@@ -144,10 +142,10 @@ public class GameRunner extends Canvas implements Runnable {
 
 		JFrame frame = new JFrame("Tactics Alpha");
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(runner, BorderLayout.CENTER);
+		panel.add(runner);
 
 		frame.setContentPane(panel);
-		frame.pack();
+		frame.setSize(1024, 768);
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
