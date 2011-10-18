@@ -26,10 +26,11 @@ public class ScreenRenderer extends Bitmap {
 		this.gridY = (GameRunner.HEIGHT - (this.tileSize * grid.height)) / 2;
 
 		this.renderGrid(grid);
+		// TODO: This should take some actors.
+		this.renderActors();
 	}
 
 	private void renderGrid(Grid grid) {
-
 		this.fill(this.getGridLocation(grid), 0x000000);
 		Tile[][] tiles = grid.getTiles();
 		GridPoint selectedLocation = grid.getSelectedLocation();
@@ -44,9 +45,25 @@ public class ScreenRenderer extends Bitmap {
 		}
 	}
 
+	private void renderActors() {
+		// TODO: Temporary testing code.
+		this.fill(this.getActorLocation(0, 0), 0xffff00);
+		this.fill(this.getActorLocation(2, 3), 0xccccff);
+	}
+
 	private Rectangle getTileLocation(int x, int y) {
-		return new Rectangle(this.gridX + (x * this.tileSize) + 1, this.gridY + (y * this.tileSize) + 1,
-				this.gridX + (x * this.tileSize) + (this.tileSize - 1), this.gridY + (y * this.tileSize) + (this.tileSize - 1));
+		int tileSizeReduction = 1;
+		return new Rectangle(this.gridX + (x * this.tileSize) + tileSizeReduction, this.gridY + (y * this.tileSize) + tileSizeReduction, this.gridX
+				+ (x * this.tileSize) + (this.tileSize - tileSizeReduction), this.gridY + (y * this.tileSize) + (this.tileSize - tileSizeReduction));
+	}
+
+	private Rectangle getActorLocation(int x, int y) {
+		int actorSizeReduction = 5;
+		while (this.tileSize - (actorSizeReduction * 2) < 0) {
+			actorSizeReduction--;
+		}
+		return new Rectangle(this.gridX + (x * this.tileSize) + actorSizeReduction, this.gridY + (y * this.tileSize) + actorSizeReduction, this.gridX
+				+ (x * this.tileSize) + (this.tileSize - actorSizeReduction), this.gridY + (y * this.tileSize) + (this.tileSize - actorSizeReduction));
 	}
 
 	private Rectangle getGridLocation(Grid grid) {
