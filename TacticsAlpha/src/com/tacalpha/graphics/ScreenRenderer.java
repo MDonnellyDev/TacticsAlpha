@@ -28,7 +28,7 @@ public class ScreenRenderer extends Bitmap {
 		this.renderGrid(grid);
 	}
 
-	public void renderGrid(Grid grid) {
+	private void renderGrid(Grid grid) {
 
 		this.fill(this.getGridLocation(grid), 0x000000);
 		Tile[][] tiles = grid.getTiles();
@@ -44,12 +44,12 @@ public class ScreenRenderer extends Bitmap {
 		}
 	}
 
-	public Rectangle getTileLocation(int x, int y) {
+	private Rectangle getTileLocation(int x, int y) {
 		return new Rectangle(this.gridX + (x * this.tileSize) + 1, this.gridY + (y * this.tileSize) + 1,
 				this.gridX + (x * this.tileSize) + (this.tileSize - 1), this.gridY + (y * this.tileSize) + (this.tileSize - 1));
 	}
 
-	public Rectangle getGridLocation(Grid grid) {
+	private Rectangle getGridLocation(Grid grid) {
 		return new Rectangle(this.gridX, this.gridY, this.gridX + (grid.width) * this.tileSize, this.gridY + (grid.height) * this.tileSize);
 	}
 }
