@@ -54,6 +54,11 @@ public class ScreenRenderer extends Component {
 		}
 	}
 
+	private void fill(Rectangle rect, Color color) {
+		this.graphics2D.setColor(color);
+		this.graphics2D.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+	}
+
 	private Rectangle getTileLocation(int x, int y) {
 		return new Rectangle(this.gridX + (x * this.tileSize) + 1, this.gridY + (y * this.tileSize) + 1,
 				this.gridX + (x * this.tileSize) + (this.tileSize - 1), this.gridY + (y * this.tileSize) + (this.tileSize - 1));
