@@ -1,6 +1,10 @@
 package com.tacalpha.menu;
 
 public class BattleActionMenu extends Menu {
+	public static enum Action {
+		MOVE, DELETE, CANCEL;
+	}
+
 	public BattleActionMenu() {
 		this.addOption("Move");
 		this.addOption("Delete");
@@ -8,9 +12,15 @@ public class BattleActionMenu extends Menu {
 	}
 
 	@Override
-	public Object choose() {
-		// TODO Auto-generated method stub
-		return null;
+	public Action choose() {
+		switch (this.getCurrent()) {
+			case 0:
+				return Action.MOVE;
+			case 1:
+				return Action.DELETE;
+			case 2:
+			default:
+				return Action.CANCEL;
+		}
 	}
-
 }

@@ -59,6 +59,10 @@ public class Grid {
 		return new GridPoint(this.currentXPosition, this.currentYPosition);
 	}
 
+	public Tile getSelectedTile() {
+		return this.tiles[this.currentYPosition][this.currentXPosition];
+	}
+
 	public Tile[][] getTiles() {
 		return this.tiles;
 	}
@@ -86,6 +90,10 @@ public class Grid {
 
 	public void addActorToGrid(Actor actor, GridPoint destination) {
 		this.tiles[destination.getRow()][destination.getColumn()].setOccupant(actor);
+	}
+
+	public void removeSelectedActor() {
+		this.tiles[this.currentYPosition][this.currentXPosition].setOccupant(null);
 	}
 
 	public Actor getActor(GridPoint location) {

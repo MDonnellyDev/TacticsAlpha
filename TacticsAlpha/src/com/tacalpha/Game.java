@@ -11,6 +11,7 @@ import com.tacalpha.grid.Grid;
 import com.tacalpha.input.InputHelper;
 import com.tacalpha.input.InputRepeatHelper;
 import com.tacalpha.input.InputSinglePressHelper;
+import com.tacalpha.menu.BattleActionMenu;
 import com.tacalpha.menu.Menu;
 
 public class Game {
@@ -50,6 +51,11 @@ public class Game {
 		boolean right = this.rightHelper.state(keyStates[KeyEvent.VK_RIGHT]);
 		boolean enter = this.enterHelper.state(keyStates[KeyEvent.VK_ENTER]);
 
+		if (this.activeMenu != null) {
+			this.handleMenu(up, down, enter);
+			return;
+		}
+
 		if (up) {
 			this.grid.moveSelectedLocation(Direction.UP);
 		} else if (down) {
@@ -60,12 +66,39 @@ public class Game {
 			this.grid.moveSelectedLocation(Direction.RIGHT);
 		} else if (enter) {
 			if (this.currentActor == null) {
-				this.currentActor = this.grid.getActor(this.grid.getSelectedLocation());
+				if (this.grid.getSelectedTile().getOccupant() != null) {
+					this.activeMenu = new BattleActionMenu();
+				}
 			} else {
 				if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
 					this.currentActor = null;
 				}
 			}
+		}
+	}
+
+	private void handleMenu(boolean up, boolean down, boolean enter) {
+		if (up) {
+			this.activeMenu.up();
+		} else if (down) {
+			this.activeMenu.down();
+		} else if (enter) {
+			if (this.activeMenu instanceof BattleActionMenu) {
+				BattleActionMenu.Action action = (BattleActionMenu.Action) this.activeMenu.choose();
+				switch (action) {
+					case MOVE:
+						this.currentActor = this.grid.getSelectedTile().getOccupant();
+						break;
+					case DELETE:
+						this.actors.remove(this.grid.getSelectedTile().getOccupant());
+						this.grid.removeSelectedActor();
+						break;
+					case CANCEL:
+					default:
+						break;
+				}
+			}
+			this.activeMenu = null;
 		}
 	}
 

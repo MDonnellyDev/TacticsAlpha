@@ -2,9 +2,11 @@ package com.tacalpha.graphics;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.List;
 
 import com.tacalpha.Game;
 import com.tacalpha.GameRunner;
@@ -16,7 +18,7 @@ import com.tacalpha.menu.Menu;
 
 public class ScreenRenderer extends Component {
 	// Generic
-	private Graphics2D graphics2D;
+	private Graphics2D graphics;
 	private BufferedImage image;
 
 	// BATTLE Screen
@@ -26,7 +28,7 @@ public class ScreenRenderer extends Component {
 
 	public ScreenRenderer(int width, int height) {
 		this.setImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB));
-		this.graphics2D = this.getImage().createGraphics();
+		this.graphics = this.getImage().createGraphics();
 		// The grid should take up the top 2/3 of the screen.
 		this.gridSpace = new Rectangle(0, 0, GameRunner.WIDTH, GameRunner.HEIGHT * 2 / 3);
 		this.menuSpace = new Rectangle(0, this.gridSpace.bottom + 1, GameRunner.WIDTH, GameRunner.HEIGHT);
@@ -73,11 +75,34 @@ public class ScreenRenderer extends Component {
 
 	private void renderMenu(Menu menu) {
 		this.fill(this.menuSpace, Color.GRAY);
+
+		if (menu == null) {
+			return;
+		}
+
+		this.graphics.setFont(new Font("Arial", Font.PLAIN, 20));
+
+		List<String> options = menu.getOptionTitles();
+
+		// Leave some space before the words.
+		int left = this.menuSpace.left + 15;
+		int fontHeight = this.graphics.getFontMetrics().getHeight();
+		int selectedIndex = menu.getCurrent();
+
+		for (int i = 0; i < options.size(); i++) {
+			String option = options.get(i);
+			if (i == selectedIndex) {
+				this.graphics.setColor(Color.WHITE);
+			} else {
+				this.graphics.setColor(Color.BLACK);
+			}
+			this.graphics.drawString(option, left, this.menuSpace.top + ((i + 1) * fontHeight));
+		}
 	}
 
 	private void fill(Rectangle rect, Color color) {
-		this.graphics2D.setColor(color);
-		this.graphics2D.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+		this.graphics.setColor(color);
+		this.graphics.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 	}
 
 	private Rectangle getTileRectangle(int x, int y) {
