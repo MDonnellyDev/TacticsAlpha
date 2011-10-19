@@ -24,14 +24,25 @@ public class ScreenRenderer extends Component {
 	// BATTLE Screen
 	private int tileSize;
 	private Rectangle gridSpace;
+	private Rectangle textSpace;
 	private Rectangle menuSpace;
+	private Rectangle logSpace;
+	private Rectangle messageSpace;
+	private final static int TEXT_SPACING = 5;
+	private final static int TEXT_BORDERS = 5;
 
 	public ScreenRenderer(int width, int height) {
 		this.setImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB));
 		this.graphics = this.getImage().createGraphics();
 		// The grid should take up the top 2/3 of the screen.
 		this.gridSpace = new Rectangle(0, 0, GameRunner.WIDTH, GameRunner.HEIGHT * 2 / 3);
-		this.menuSpace = new Rectangle(0, this.gridSpace.bottom + 1, GameRunner.WIDTH, GameRunner.HEIGHT);
+		this.textSpace = new Rectangle(0, this.gridSpace.bottom + 1, GameRunner.WIDTH, GameRunner.HEIGHT);
+		this.menuSpace = new Rectangle(this.textSpace.left + ScreenRenderer.TEXT_SPACING, this.textSpace.top + ScreenRenderer.TEXT_SPACING,
+				(this.textSpace.width / 4) - ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
+		this.messageSpace = new Rectangle(this.textSpace.left + (this.textSpace.width / 4) + ScreenRenderer.TEXT_SPACING, this.textSpace.top
+				+ ScreenRenderer.TEXT_SPACING, this.textSpace.right - ScreenRenderer.TEXT_SPACING, this.textSpace.top + 50 - ScreenRenderer.TEXT_SPACING);
+		this.logSpace = new Rectangle(this.messageSpace.left, this.textSpace.top + 50 + ScreenRenderer.TEXT_SPACING, this.textSpace.right
+				- ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
 		this.tileSize = 50;
 	}
 
@@ -44,10 +55,16 @@ public class ScreenRenderer extends Component {
 		// way.
 		this.tileSize = Math.min(this.gridSpace.height / grid.height, this.gridSpace.width / grid.width);
 
+		// Grid
 		this.renderGrid(grid);
-		// TODO: Make this take some actors.
 		this.renderActors(actors);
+
+		// Menu and Info
+		this.fill(this.textSpace, Color.BLACK);
 		this.renderMenu(menu);
+		// TODO: These 2 need to be fleshed out.
+		this.renderMessage("This message will change!");
+		this.renderLog();
 	}
 
 	private void renderGrid(Grid grid) {
@@ -75,6 +92,7 @@ public class ScreenRenderer extends Component {
 
 	private void renderMenu(Menu menu) {
 		this.fill(this.menuSpace, Color.GRAY);
+		this.border(this.menuSpace, Color.DARK_GRAY, ScreenRenderer.TEXT_BORDERS);
 
 		if (menu == null) {
 			return;
@@ -100,9 +118,39 @@ public class ScreenRenderer extends Component {
 		}
 	}
 
+	private void renderMessage(String message) {
+		this.fill(this.messageSpace, Color.GRAY);
+		this.border(this.messageSpace, Color.DARK_GRAY, ScreenRenderer.TEXT_BORDERS);
+
+		if (message == null) {
+			return;
+		}
+
+		this.graphics.setColor(Color.BLACK);
+		this.graphics.setFont(new Font("Arial", Font.PLAIN, 20));
+		this.graphics.drawString(message, this.messageSpace.left + 15, this.messageSpace.top + this.graphics.getFontMetrics().getHeight());
+	}
+
+	private void renderLog() {
+		// TODO: Make this take an argument.
+		this.fill(this.logSpace, Color.GRAY);
+		this.border(this.logSpace, Color.DARK_GRAY, ScreenRenderer.TEXT_BORDERS);
+	}
+
 	private void fill(Rectangle rect, Color color) {
 		this.graphics.setColor(color);
 		this.graphics.fillRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+	}
+
+	private void border(Rectangle rect, Color color, int thickness) {
+		// int outer = thickness / 2;
+		int outer = thickness / 2;
+		int inner = thickness - outer;
+		this.graphics.setColor(color);
+		this.graphics.fillRect(rect.left - outer, rect.top - outer, rect.width + (outer * 2), thickness);
+		this.graphics.fillRect(rect.left - outer, rect.top - outer, thickness, rect.height + (outer * 2));
+		this.graphics.fillRect(rect.right - inner, rect.top - outer, thickness, rect.height + (outer * 2));
+		this.graphics.fillRect(rect.left - outer, rect.bottom - inner, rect.width + (outer * 2), thickness);
 	}
 
 	private Rectangle getTileRectangle(int x, int y) {
