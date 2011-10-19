@@ -12,8 +12,9 @@ public abstract class Menu {
 		this.currentOption = 0;
 	}
 
-	// TODO: Make this return something more specific.
 	public abstract Object choose();
+
+	public abstract String getDescription();
 
 	public void up() {
 		this.currentOption--;
