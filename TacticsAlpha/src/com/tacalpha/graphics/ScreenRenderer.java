@@ -62,8 +62,8 @@ public class ScreenRenderer extends Component {
 		// Menu and Info
 		this.fill(this.textSpace, Color.BLACK);
 		this.renderMenu(menu);
-		// TODO: These 2 need to be fleshed out.
-		this.renderMessage("This message will change!");
+		this.renderMessage(game.getMessage());
+		// TODO: Implement a logger and write this method.
 		this.renderLog();
 	}
 
@@ -143,7 +143,6 @@ public class ScreenRenderer extends Component {
 	}
 
 	private void border(Rectangle rect, Color color, int thickness) {
-		// int outer = thickness / 2;
 		int outer = thickness / 2;
 		int inner = thickness - outer;
 		this.graphics.setColor(color);

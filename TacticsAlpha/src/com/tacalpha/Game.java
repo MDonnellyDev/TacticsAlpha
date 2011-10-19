@@ -8,6 +8,7 @@ import java.util.List;
 import com.tacalpha.actor.Actor;
 import com.tacalpha.grid.Direction;
 import com.tacalpha.grid.Grid;
+import com.tacalpha.grid.Tile;
 import com.tacalpha.input.InputHelper;
 import com.tacalpha.input.InputRepeatHelper;
 import com.tacalpha.input.InputSinglePressHelper;
@@ -24,12 +25,18 @@ public class Game {
 	private InputHelper leftHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
 	private InputHelper rightHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
 	private InputHelper enterHelper = new InputSinglePressHelper();
+	private InputHelper escHelper = new InputSinglePressHelper();
 
 	// Game logic
 	private Grid grid;
 	private List<Actor> actors;
 	private Actor currentActor;
 	private Menu activeMenu;
+	private GameState state;
+
+	// Player Display stuff
+	private String message;
+	private boolean showMessage;
 
 	public Game() {
 		// TODO: Temporary testing code.
@@ -42,6 +49,7 @@ public class Game {
 		}
 		this.currentActor = null;
 		this.activeMenu = null;
+		this.state = GameState.INPUT;
 	}
 
 	public void update(boolean[] keyStates) {
@@ -50,6 +58,7 @@ public class Game {
 		boolean left = this.leftHelper.state(keyStates[KeyEvent.VK_LEFT]);
 		boolean right = this.rightHelper.state(keyStates[KeyEvent.VK_RIGHT]);
 		boolean enter = this.enterHelper.state(keyStates[KeyEvent.VK_ENTER]);
+		boolean esc = this.escHelper.state(keyStates[KeyEvent.VK_ESCAPE]);
 
 		if (this.activeMenu != null) {
 			this.handleMenu(up, down, enter);
@@ -65,14 +74,38 @@ public class Game {
 		} else if (right) {
 			this.grid.moveSelectedLocation(Direction.RIGHT);
 		} else if (enter) {
-			if (this.currentActor == null) {
+			if (this.state.equals(GameState.INPUT)) {
 				if (this.grid.getSelectedTile().getOccupant() != null) {
 					this.activeMenu = new BattleActionMenu();
 				}
 			} else {
-				if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
-					this.currentActor = null;
+				if (this.state.equals(GameState.MOVING)) {
+					if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
+						this.message = null;
+						this.showMessage = false;
+						this.currentActor = null;
+						this.state = GameState.INPUT;
+					}
 				}
+			}
+		} else if (esc) {
+			if (this.state.equals(GameState.MOVING)) {
+				this.message = null;
+				this.showMessage = false;
+				this.currentActor = null;
+				this.state = GameState.INPUT;
+			}
+		}
+
+		// Give some info on the current square if there's nothing else to say.
+		if (!this.showMessage) {
+			Tile tile = this.grid.getSelectedTile();
+			if (tile.getOccupant() != null) {
+				this.message = "Press ENTER to interact with this unit.";
+			} else if (tile.isImpassable()) {
+				this.message = "Impassable terrain.";
+			} else {
+				this.message = "Normal square.";
 			}
 		}
 	}
@@ -88,6 +121,9 @@ public class Game {
 				switch (action) {
 					case MOVE:
 						this.currentActor = this.grid.getSelectedTile().getOccupant();
+						this.state = GameState.MOVING;
+						this.message = "Moving. Press ENTER to place or ESC to cancel.";
+						this.showMessage = true;
 						break;
 					case DELETE:
 						this.actors.remove(this.grid.getSelectedTile().getOccupant());
@@ -99,6 +135,9 @@ public class Game {
 				}
 			}
 			this.activeMenu = null;
+		}
+		if (this.activeMenu != null) {
+			this.message = this.activeMenu.getDescription();
 		}
 	}
 
@@ -114,5 +153,9 @@ public class Game {
 
 	public Menu getActiveMenu() {
 		return this.activeMenu;
+	}
+
+	public String getMessage() {
+		return this.message;
 	}
 }
