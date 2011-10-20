@@ -16,4 +16,8 @@ public class Rectangle {
 		this.width = this.right - this.left;
 		this.height = this.bottom - this.top;
 	}
+
+	public int getHorizontalCenter() {
+		return this.right - (this.width / 2);
+	}
 }

@@ -42,8 +42,15 @@ public class Game {
 		// TODO: Temporary testing code.
 		this.grid = new Grid("res/maps/test.map");
 		this.actors = new ArrayList<Actor>();
-		this.actors.add(new Actor(0, 0));
-		this.actors.add(new Actor(2, 3));
+		Actor temp = new Actor(0, 0);
+		temp.configure(100, 50);
+		temp.prep();
+		temp.damage(25);
+		this.actors.add(temp);
+		temp = new Actor(2, 3);
+		temp.configure(120, 45);
+		temp.prep();
+		this.actors.add(temp);
 		for (Actor actor : this.actors) {
 			this.grid.addActorToGrid(actor, actor.getLocation());
 		}

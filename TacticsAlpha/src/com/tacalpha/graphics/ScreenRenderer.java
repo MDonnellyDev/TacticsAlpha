@@ -26,7 +26,7 @@ public class ScreenRenderer extends Component {
 	private Rectangle gridSpace;
 	private Rectangle textSpace;
 	private Rectangle menuSpace;
-	private Rectangle logSpace;
+	private Rectangle actorSpace;
 	private Rectangle messageSpace;
 	private final static int TEXT_SPACING = 5;
 	private final static int TEXT_BORDERS = 5;
@@ -41,7 +41,7 @@ public class ScreenRenderer extends Component {
 				(this.textSpace.width / 4) - ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
 		this.messageSpace = new Rectangle(this.textSpace.left + (this.textSpace.width / 4) + ScreenRenderer.TEXT_SPACING, this.textSpace.top
 				+ ScreenRenderer.TEXT_SPACING, this.textSpace.right - ScreenRenderer.TEXT_SPACING, this.textSpace.top + 50 - ScreenRenderer.TEXT_SPACING);
-		this.logSpace = new Rectangle(this.messageSpace.left, this.textSpace.top + 50 + ScreenRenderer.TEXT_SPACING, this.textSpace.right
+		this.actorSpace = new Rectangle(this.messageSpace.left, this.textSpace.top + 50 + ScreenRenderer.TEXT_SPACING, this.textSpace.right
 				- ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
 		this.tileSize = 50;
 	}
@@ -63,8 +63,7 @@ public class ScreenRenderer extends Component {
 		this.fill(this.textSpace, Color.BLACK);
 		this.renderMenu(menu);
 		this.renderMessage(game.getMessage());
-		// TODO: Implement a logger and write this method.
-		this.renderLog();
+		this.renderActorInfo(grid.getSelectedTile().getOccupant());
 	}
 
 	private void renderGrid(Grid grid) {
@@ -131,10 +130,43 @@ public class ScreenRenderer extends Component {
 		this.graphics.drawString(message, this.messageSpace.left + 15, this.messageSpace.top + this.graphics.getFontMetrics().getHeight());
 	}
 
-	private void renderLog() {
-		// TODO: Make this take an argument.
-		this.fill(this.logSpace, Color.GRAY);
-		this.border(this.logSpace, Color.DARK_GRAY, ScreenRenderer.TEXT_BORDERS);
+	private void renderActorInfo(Actor actor) {
+		this.fill(this.actorSpace, Color.GRAY);
+		this.border(this.actorSpace, Color.DARK_GRAY, ScreenRenderer.TEXT_BORDERS);
+
+		if (actor == null) {
+			return;
+		}
+
+		this.graphics.setColor(Color.BLACK);
+		this.graphics.setFont(new Font("Courier New", Font.BOLD, 20));
+		int fontHeight = this.graphics.getFontMetrics().getHeight();
+		this.graphics.drawString("HP:", this.actorSpace.left + 15, this.actorSpace.top + fontHeight);
+		this.graphics.drawString("MP:", this.actorSpace.left + 15, this.actorSpace.top + (fontHeight * 2));
+		this.graphics.drawString(actor.getCurrentHealth() + " / " + actor.getMaxHealth(), this.actorSpace.getHorizontalCenter() + 5, this.actorSpace.top
+				+ fontHeight);
+		this.graphics.drawString(actor.getCurrentMana() + " / " + actor.getMaxMana(), this.actorSpace.getHorizontalCenter() + 5, this.actorSpace.top
+				+ (fontHeight * 2));
+
+		// TODO: Calculate how many pixels the HP: and MP: text takes up instead
+		// of guessing.
+		int textOffset = 50;
+		int bottomBuffer = this.graphics.getFontMetrics().getAscent() + 1;
+		int topBuffer = this.graphics.getFontMetrics().getDescent() + this.graphics.getFontMetrics().getLeading() + 1;
+		// HP
+		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + topBuffer, this.actorSpace.getHorizontalCenter(), this.actorSpace.top
+				+ (fontHeight * 2) - bottomBuffer), new Color(127, 0, 0));
+		int barWidth = this.actorSpace.getHorizontalCenter() - (this.actorSpace.left + textOffset);
+		int currentHpWidth = (int) (barWidth * ((float) actor.getCurrentHealth() / (float) actor.getMaxHealth()));
+		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + topBuffer, this.actorSpace.left + textOffset + currentHpWidth,
+				this.actorSpace.top + (fontHeight * 2) - bottomBuffer), Color.RED);
+		// MP Background
+		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + fontHeight + topBuffer, this.actorSpace.getHorizontalCenter(),
+				this.actorSpace.top + (fontHeight * 3) - bottomBuffer), new Color(0, 0, 127));
+		int currentMpWidth = (int) (barWidth * ((float) actor.getCurrentMana() / (float) actor.getMaxMana()));
+		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + fontHeight + topBuffer, this.actorSpace.left + textOffset
+				+ currentMpWidth, this.actorSpace.top + (fontHeight * 3) - bottomBuffer), Color.BLUE);
+
 	}
 
 	private void fill(Rectangle rect, Color color) {
