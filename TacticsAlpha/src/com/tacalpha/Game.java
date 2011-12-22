@@ -26,6 +26,8 @@ public class Game {
 	private InputHelper rightHelper = new InputRepeatHelper(Game.GRID_HOLD_TIMER * 3, Game.GRID_HOLD_TIMER);
 	private InputHelper enterHelper = new InputSinglePressHelper();
 	private InputHelper escHelper = new InputSinglePressHelper();
+	private InputHelper equalsHelper = new InputSinglePressHelper();
+	private InputHelper minusHelper = new InputSinglePressHelper();
 
 	// Game logic
 	private Grid grid;
@@ -37,6 +39,9 @@ public class Game {
 	// Player Display stuff
 	private String message;
 	private boolean showMessage;
+
+	// Meta Information
+	private int tileSize;
 
 	public Game() {
 		// TODO: Temporary testing code.
@@ -57,6 +62,7 @@ public class Game {
 		this.currentActor = null;
 		this.activeMenu = null;
 		this.state = GameState.INPUT;
+		this.tileSize = 50;
 	}
 
 	public void update(boolean[] keyStates) {
@@ -66,12 +72,30 @@ public class Game {
 		this.rightHelper.update(keyStates[KeyEvent.VK_RIGHT]);
 		this.enterHelper.update(keyStates[KeyEvent.VK_ENTER]);
 		this.escHelper.update(keyStates[KeyEvent.VK_ESCAPE]);
+		this.equalsHelper.update(keyStates[KeyEvent.VK_EQUALS]);
+		this.minusHelper.update(keyStates[KeyEvent.VK_MINUS]);
+
+		this.handleMetaInput();
 
 		if (this.activeMenu != null) {
 			this.handleMenuInput();
 		} else {
 			this.handleGameInput();
 			this.displayGameMessage();
+		}
+	}
+
+	private void handleMetaInput() {
+		if (this.equalsHelper.state()) {
+			this.tileSize += 5;
+			if (this.tileSize > 100) {
+				this.tileSize = 100;
+			}
+		} else if (this.minusHelper.state()) {
+			this.tileSize -= 5;
+			if (this.tileSize < 25) {
+				this.tileSize = 25;
+			}
 		}
 	}
 
@@ -170,5 +194,9 @@ public class Game {
 
 	public String getMessage() {
 		return this.message;
+	}
+
+	public int getTileSize() {
+		return this.tileSize;
 	}
 }
