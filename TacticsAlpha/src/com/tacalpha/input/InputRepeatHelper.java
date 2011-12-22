@@ -11,29 +11,33 @@ public class InputRepeatHelper implements InputHelper {
 	}
 
 	@Override
-	public boolean state(boolean currentState) {
-		if (!currentState) {
+	public void update(boolean currentState) {
+		if (currentState) {
+			this.ticksHeld++;
+		} else {
 			this.ticksHeld = 0;
-			return false;
 		}
 
-		try {
-			if (this.ticksHeld == 0) {
-				return true;
-			}
-			if (this.ticksHeld < this.initialDelay) {
-				return false;
-			}
-			if (this.ticksHeld == this.initialDelay) {
-				return true;
-			}
-			if ((this.ticksHeld - this.initialDelay) % this.repeatDelay == 0) {
-				return true;
-			} else {
-				return false;
-			}
-		} finally {
-			this.ticksHeld++;
+	}
+
+	@Override
+	public boolean state() {
+		if (this.ticksHeld == 0) {
+			return false;
+		}
+		if (this.ticksHeld == 1) {
+			return true;
+		}
+		if (this.ticksHeld < this.initialDelay) {
+			return false;
+		}
+		if (this.ticksHeld == this.initialDelay) {
+			return true;
+		}
+		if ((this.ticksHeld - this.initialDelay) % this.repeatDelay == 0) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 }
