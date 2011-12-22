@@ -24,11 +24,14 @@ public class ScreenRenderer extends Component {
 
 	// BATTLE Screen
 	private int tileSize;
+	private int gridXOffset;
+	private int gridYOffset;
 	private Rectangle gridSpace;
 	private Rectangle textSpace;
 	private Rectangle menuSpace;
 	private Rectangle actorSpace;
 	private Rectangle messageSpace;
+	private final static int MENU_SPACE_HEIGHT = 250;
 	private final static int TEXT_SPACING = 5;
 	private final static int TEXT_BORDERS = 5;
 
@@ -64,7 +67,9 @@ public class ScreenRenderer extends Component {
 
 		// TODO: I don't like the class fields here. There has to be a better
 		// way.
-		this.tileSize = Math.min(this.gridSpace.height / grid.height, this.gridSpace.width / grid.width);
+		// this.tileSize = Math.min(this.gridSpace.height / grid.height,
+		// this.gridSpace.width / grid.width);
+		this.tileSize = game.getTileSize();
 
 		// Grid
 		this.renderGrid(grid);
@@ -80,8 +85,11 @@ public class ScreenRenderer extends Component {
 	private void setUpRenderSpaces(int width, int height) {
 		this.setImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB));
 		this.graphics = this.getImage().createGraphics();
-		// The grid should take up the top 2/3 of the screen.
-		this.gridSpace = new Rectangle(0, 0, width, height * 2 / 3);
+		// The grid should take up the top of the screen, leaving room for the
+		// bottom stuff.
+		this.gridSpace = new Rectangle(0, 0, width, height - ScreenRenderer.MENU_SPACE_HEIGHT);
+
+		// Everything else should take up the bottom 250px of the screen
 		this.textSpace = new Rectangle(0, this.gridSpace.bottom + 1, width, height);
 		this.menuSpace = new Rectangle(this.textSpace.left + ScreenRenderer.TEXT_SPACING, this.textSpace.top + ScreenRenderer.TEXT_SPACING,
 				(this.textSpace.width / 4) - ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
@@ -96,6 +104,7 @@ public class ScreenRenderer extends Component {
 		this.fill(this.gridSpace, this.screenBackgroundColor);
 		Tile[][] tiles = grid.getTiles();
 		GridPoint selectedLocation = grid.getSelectedLocation();
+		this.calculateGridOffset(grid, selectedLocation);
 		for (int y = 0; y < grid.height; y++) {
 			for (int x = 0; x < grid.width; x++) {
 				Tile tile = tiles[y][x];
@@ -210,11 +219,50 @@ public class ScreenRenderer extends Component {
 		this.graphics.fillRect(rect.left - outer, rect.bottom - inner, rect.width + (outer * 2), thickness);
 	}
 
+	private void calculateGridOffset(Grid grid, GridPoint centerOn) {
+		int gridWidthPx = grid.width * this.tileSize;
+		int gridHeightPx = grid.height * this.tileSize;
+		if (gridWidthPx <= this.gridSpace.width && gridHeightPx <= this.gridSpace.height) {
+			// The grid fits in the space we have with room to spare. The
+			// offsets will be used to center the grid in the space.
+			this.gridXOffset = (this.gridSpace.width - gridWidthPx) / 2;
+			this.gridYOffset = (this.gridSpace.height - gridHeightPx) / 2;
+		} else {
+			// The grid does not fit in the space we have. The offsets will be
+			// used to keep the selected square centered in the view.
+			this.gridXOffset = (this.gridSpace.width / 2) - (centerOn.getColumn() * this.tileSize) - (this.tileSize / 2);
+			this.gridYOffset = (this.gridSpace.height / 2) - (centerOn.getRow() * this.tileSize) - (this.tileSize / 2);
+
+			// Lock the edges of the grid to the edges of the screen when
+			// selecting a square near the edge of the grid.
+			if (this.gridXOffset > 0) {
+				this.gridXOffset = 0;
+			}
+			if (this.gridYOffset > 0) {
+				this.gridYOffset = 0;
+			}
+			if (this.gridXOffset + gridWidthPx < this.gridSpace.width) {
+				this.gridXOffset = this.gridSpace.width - gridWidthPx;
+			}
+			if (this.gridYOffset + gridHeightPx < this.gridSpace.height) {
+				this.gridYOffset = this.gridSpace.height - gridHeightPx;
+			}
+
+			// If the grid is bigger on one side but smaller in the other,
+			// center on the smaller side.
+			if (gridWidthPx <= this.gridSpace.width) {
+				this.gridXOffset = (this.gridSpace.width - gridWidthPx) / 2;
+			} else if (gridHeightPx <= this.gridSpace.height) {
+				this.gridYOffset = (this.gridSpace.height - gridHeightPx) / 2;
+			}
+		}
+	}
+
 	private Rectangle getTileRectangle(int x, int y) {
 		int tileSizeReduction = 1;
-		return new Rectangle(this.gridSpace.left + (x * this.tileSize) + tileSizeReduction, this.gridSpace.top + (y * this.tileSize) + tileSizeReduction,
-				this.gridSpace.left + (x * this.tileSize) + (this.tileSize - tileSizeReduction), this.gridSpace.top + (y * this.tileSize)
-						+ (this.tileSize - tileSizeReduction));
+		return new Rectangle(this.gridSpace.left + (x * this.tileSize) + tileSizeReduction + this.gridXOffset, this.gridSpace.top + (y * this.tileSize)
+				+ tileSizeReduction + this.gridYOffset, this.gridSpace.left + (x * this.tileSize) + (this.tileSize - tileSizeReduction) + this.gridXOffset,
+				this.gridSpace.top + (y * this.tileSize) + (this.tileSize - tileSizeReduction) + this.gridYOffset);
 	}
 
 	private Rectangle getActorRectangle(int x, int y) {
@@ -222,9 +270,9 @@ public class ScreenRenderer extends Component {
 		while (this.tileSize - (actorSizeReduction * 2) < 0) {
 			actorSizeReduction--;
 		}
-		return new Rectangle(this.gridSpace.left + (x * this.tileSize) + actorSizeReduction, this.gridSpace.top + (y * this.tileSize) + actorSizeReduction,
-				this.gridSpace.left + (x * this.tileSize) + (this.tileSize - actorSizeReduction), this.gridSpace.top + (y * this.tileSize)
-						+ (this.tileSize - actorSizeReduction));
+		return new Rectangle(this.gridSpace.left + (x * this.tileSize) + actorSizeReduction + this.gridXOffset, this.gridSpace.top + (y * this.tileSize)
+				+ actorSizeReduction + this.gridYOffset, this.gridSpace.left + (x * this.tileSize) + (this.tileSize - actorSizeReduction) + this.gridXOffset,
+				this.gridSpace.top + (y * this.tileSize) + (this.tileSize - actorSizeReduction) + this.gridYOffset);
 	}
 
 	public void setImage(BufferedImage image) {
