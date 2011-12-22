@@ -5,7 +5,6 @@ import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,8 +15,9 @@ import com.tacalpha.input.InputHandler;
 public class GameRunner extends Canvas implements Runnable {
 	private static final long serialVersionUID = -7093576847463991329L;
 
-	public static final int WIDTH = 1024;
-	public static final int HEIGHT = 768;
+	private static final int WIDTH = 1024;
+	private static final int HEIGHT = 768;
+	private static JFrame FRAME;
 
 	private Game game;
 
@@ -25,19 +25,14 @@ public class GameRunner extends Canvas implements Runnable {
 	private Thread thread;
 
 	private ScreenRenderer screen;
-	private BufferedImage image;
-	private int[] pixels;
 	private InputHandler inputHandler;
 
 	public GameRunner() {
 		Dimension size = new Dimension(GameRunner.WIDTH, GameRunner.HEIGHT);
 		this.setSize(size);
-		this.setPreferredSize(size);
-		this.setMinimumSize(size);
-		this.setMaximumSize(size);
 
 		this.game = new Game();
-		this.screen = new ScreenRenderer(GameRunner.WIDTH, GameRunner.HEIGHT);
+		this.screen = new ScreenRenderer();
 
 		this.inputHandler = new InputHandler();
 
@@ -47,7 +42,6 @@ public class GameRunner extends Canvas implements Runnable {
 
 	@Override
 	public void run() {
-
 		double unprocessedSeconds = 0;
 		long lastTime = System.nanoTime();
 		double secondsPerTick = 1.0 / 60.0;
@@ -99,11 +93,11 @@ public class GameRunner extends Canvas implements Runnable {
 			return;
 		}
 
-		this.screen.render(this.game, this.hasFocus());
+		this.screen.render(this.game, this.hasFocus(), this.getWidth(), this.getHeight());
 
 		Graphics graphics = bufferStrategy.getDrawGraphics();
 		graphics.fillRect(0, 0, this.getWidth(), this.getHeight());
-		graphics.drawImage(this.screen.getImage(), 0, 0, GameRunner.WIDTH, GameRunner.HEIGHT, null);
+		graphics.drawImage(this.screen.getImage(), 0, 0, this.getWidth(), this.getHeight(), null);
 		graphics.dispose();
 		bufferStrategy.show();
 	}
@@ -132,17 +126,16 @@ public class GameRunner extends Canvas implements Runnable {
 	public static void main(String[] args) {
 		GameRunner runner = new GameRunner();
 
-		JFrame frame = new JFrame("Tactics Alpha");
+		GameRunner.FRAME = new JFrame("Tactics Alpha");
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.add(runner);
-		// panel.add(runner.screen);
 
-		frame.setContentPane(panel);
-		frame.setSize(GameRunner.WIDTH, GameRunner.HEIGHT);
-		frame.setLocationRelativeTo(null);
-		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+		GameRunner.FRAME.setContentPane(panel);
+		GameRunner.FRAME.setSize(GameRunner.WIDTH, GameRunner.HEIGHT);
+		GameRunner.FRAME.setMinimumSize(new Dimension(GameRunner.WIDTH, GameRunner.HEIGHT));
+		GameRunner.FRAME.setLocationRelativeTo(null);
+		GameRunner.FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		GameRunner.FRAME.setVisible(true);
 
 		runner.start();
 	}

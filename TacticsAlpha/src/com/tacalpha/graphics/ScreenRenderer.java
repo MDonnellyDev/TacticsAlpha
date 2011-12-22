@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.tacalpha.Game;
-import com.tacalpha.GameRunner;
 import com.tacalpha.actor.Actor;
 import com.tacalpha.grid.Grid;
 import com.tacalpha.grid.GridPoint;
@@ -17,6 +16,8 @@ import com.tacalpha.grid.Tile;
 import com.tacalpha.menu.Menu;
 
 public class ScreenRenderer extends Component {
+	private static final long serialVersionUID = -7203461939175986815L;
+
 	// Generic
 	private Graphics2D graphics;
 	private BufferedImage image;
@@ -31,22 +32,13 @@ public class ScreenRenderer extends Component {
 	private final static int TEXT_SPACING = 5;
 	private final static int TEXT_BORDERS = 5;
 
-	public ScreenRenderer(int width, int height) {
-		this.setImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB));
-		this.graphics = this.getImage().createGraphics();
-		// The grid should take up the top 2/3 of the screen.
-		this.gridSpace = new Rectangle(0, 0, GameRunner.WIDTH, GameRunner.HEIGHT * 2 / 3);
-		this.textSpace = new Rectangle(0, this.gridSpace.bottom + 1, GameRunner.WIDTH, GameRunner.HEIGHT);
-		this.menuSpace = new Rectangle(this.textSpace.left + ScreenRenderer.TEXT_SPACING, this.textSpace.top + ScreenRenderer.TEXT_SPACING,
-				(this.textSpace.width / 4) - ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
-		this.messageSpace = new Rectangle(this.textSpace.left + (this.textSpace.width / 4) + ScreenRenderer.TEXT_SPACING, this.textSpace.top
-				+ ScreenRenderer.TEXT_SPACING, this.textSpace.right - ScreenRenderer.TEXT_SPACING, this.textSpace.top + 50 - ScreenRenderer.TEXT_SPACING);
-		this.actorSpace = new Rectangle(this.messageSpace.left, this.textSpace.top + 50 + ScreenRenderer.TEXT_SPACING, this.textSpace.right
-				- ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
-		this.tileSize = 50;
+	public ScreenRenderer() {
+
 	}
 
-	public void render(Game game, boolean hasFocus) {
+	public void render(Game game, boolean hasFocus, int width, int height) {
+		this.setUpRenderSpaces(width, height);
+
 		Grid grid = game.getGrid();
 		Collection<Actor> actors = game.getActors();
 		Menu menu = game.getActiveMenu();
@@ -64,6 +56,21 @@ public class ScreenRenderer extends Component {
 		this.renderMenu(menu);
 		this.renderMessage(game.getMessage());
 		this.renderActorInfo(grid.getSelectedTile().getOccupant());
+	}
+
+	private void setUpRenderSpaces(int width, int height) {
+		this.setImage(new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB));
+		this.graphics = this.getImage().createGraphics();
+		// The grid should take up the top 2/3 of the screen.
+		this.gridSpace = new Rectangle(0, 0, width, height * 2 / 3);
+		this.textSpace = new Rectangle(0, this.gridSpace.bottom + 1, width, height);
+		this.menuSpace = new Rectangle(this.textSpace.left + ScreenRenderer.TEXT_SPACING, this.textSpace.top + ScreenRenderer.TEXT_SPACING,
+				(this.textSpace.width / 4) - ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
+		this.messageSpace = new Rectangle(this.textSpace.left + (this.textSpace.width / 4) + ScreenRenderer.TEXT_SPACING, this.textSpace.top
+				+ ScreenRenderer.TEXT_SPACING, this.textSpace.right - ScreenRenderer.TEXT_SPACING, this.textSpace.top + 50 - ScreenRenderer.TEXT_SPACING);
+		this.actorSpace = new Rectangle(this.messageSpace.left, this.textSpace.top + 50 + ScreenRenderer.TEXT_SPACING, this.textSpace.right
+				- ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
+		this.tileSize = 50;
 	}
 
 	private void renderGrid(Grid grid) {
