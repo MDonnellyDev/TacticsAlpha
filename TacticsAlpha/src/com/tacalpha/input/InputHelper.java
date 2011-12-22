@@ -1,5 +1,7 @@
 package com.tacalpha.input;
 
 public interface InputHelper {
-	public boolean state(boolean currentKeyState);
+	public void update(boolean currentKeyState);
+
+	public boolean state();
 }

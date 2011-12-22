@@ -60,69 +60,27 @@ public class Game {
 	}
 
 	public void update(boolean[] keyStates) {
-		boolean up = this.upHelper.state(keyStates[KeyEvent.VK_UP]);
-		boolean down = this.downHelper.state(keyStates[KeyEvent.VK_DOWN]);
-		boolean left = this.leftHelper.state(keyStates[KeyEvent.VK_LEFT]);
-		boolean right = this.rightHelper.state(keyStates[KeyEvent.VK_RIGHT]);
-		boolean enter = this.enterHelper.state(keyStates[KeyEvent.VK_ENTER]);
-		boolean esc = this.escHelper.state(keyStates[KeyEvent.VK_ESCAPE]);
+		this.upHelper.update(keyStates[KeyEvent.VK_UP]);
+		this.downHelper.update(keyStates[KeyEvent.VK_DOWN]);
+		this.leftHelper.update(keyStates[KeyEvent.VK_LEFT]);
+		this.rightHelper.update(keyStates[KeyEvent.VK_RIGHT]);
+		this.enterHelper.update(keyStates[KeyEvent.VK_ENTER]);
+		this.escHelper.update(keyStates[KeyEvent.VK_ESCAPE]);
 
 		if (this.activeMenu != null) {
-			this.handleMenu(up, down, enter);
-			return;
-		}
-
-		if (up) {
-			this.grid.moveSelectedLocation(Direction.UP);
-		} else if (down) {
-			this.grid.moveSelectedLocation(Direction.DOWN);
-		} else if (left) {
-			this.grid.moveSelectedLocation(Direction.LEFT);
-		} else if (right) {
-			this.grid.moveSelectedLocation(Direction.RIGHT);
-		} else if (enter) {
-			if (this.state.equals(GameState.INPUT)) {
-				if (this.grid.getSelectedTile().getOccupant() != null) {
-					this.activeMenu = new BattleActionMenu();
-				}
-			} else {
-				if (this.state.equals(GameState.MOVING)) {
-					if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
-						this.message = null;
-						this.showMessage = false;
-						this.currentActor = null;
-						this.state = GameState.INPUT;
-					}
-				}
-			}
-		} else if (esc) {
-			if (this.state.equals(GameState.MOVING)) {
-				this.message = null;
-				this.showMessage = false;
-				this.currentActor = null;
-				this.state = GameState.INPUT;
-			}
-		}
-
-		// Give some info on the current square if there's nothing else to say.
-		if (!this.showMessage) {
-			Tile tile = this.grid.getSelectedTile();
-			if (tile.getOccupant() != null) {
-				this.message = "Press ENTER to interact with this unit.";
-			} else if (tile.isImpassable()) {
-				this.message = "Impassable terrain.";
-			} else {
-				this.message = "Normal square.";
-			}
+			this.handleMenuInput();
+		} else {
+			this.handleGameInput();
+			this.displayGameMessage();
 		}
 	}
 
-	private void handleMenu(boolean up, boolean down, boolean enter) {
-		if (up) {
+	private void handleMenuInput() {
+		if (this.upHelper.state()) {
 			this.activeMenu.up();
-		} else if (down) {
+		} else if (this.downHelper.state()) {
 			this.activeMenu.down();
-		} else if (enter) {
+		} else if (this.enterHelper.state()) {
 			if (this.activeMenu instanceof BattleActionMenu) {
 				BattleActionMenu.Action action = (BattleActionMenu.Action) this.activeMenu.choose();
 				switch (action) {
@@ -145,6 +103,54 @@ public class Game {
 		}
 		if (this.activeMenu != null) {
 			this.message = this.activeMenu.getDescription();
+		}
+	}
+
+	private void handleGameInput() {
+		if (this.upHelper.state()) {
+			this.grid.moveSelectedLocation(Direction.UP);
+		} else if (this.downHelper.state()) {
+			this.grid.moveSelectedLocation(Direction.DOWN);
+		} else if (this.leftHelper.state()) {
+			this.grid.moveSelectedLocation(Direction.LEFT);
+		} else if (this.rightHelper.state()) {
+			this.grid.moveSelectedLocation(Direction.RIGHT);
+		} else if (this.enterHelper.state()) {
+			if (this.state.equals(GameState.INPUT)) {
+				if (this.grid.getSelectedTile().getOccupant() != null) {
+					this.activeMenu = new BattleActionMenu();
+				}
+			} else {
+				if (this.state.equals(GameState.MOVING)) {
+					if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
+						this.message = null;
+						this.showMessage = false;
+						this.currentActor = null;
+						this.state = GameState.INPUT;
+					}
+				}
+			}
+		} else if (this.escHelper.state()) {
+			if (this.state.equals(GameState.MOVING)) {
+				this.message = null;
+				this.showMessage = false;
+				this.currentActor = null;
+				this.state = GameState.INPUT;
+			}
+		}
+	}
+
+	private void displayGameMessage() {
+		// Give some info on the current square if there's nothing else to say.
+		if (!this.showMessage) {
+			Tile tile = this.grid.getSelectedTile();
+			if (tile.getOccupant() != null) {
+				this.message = "Press ENTER to interact with this unit.";
+			} else if (tile.isImpassable()) {
+				this.message = "Impassable terrain.";
+			} else {
+				this.message = "Normal square.";
+			}
 		}
 	}
 

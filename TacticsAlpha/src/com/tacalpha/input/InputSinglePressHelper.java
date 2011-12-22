@@ -1,6 +1,7 @@
 package com.tacalpha.input;
 
 public class InputSinglePressHelper implements InputHelper {
+	private boolean held;
 	private boolean pressed;
 
 	public InputSinglePressHelper() {
@@ -8,15 +9,20 @@ public class InputSinglePressHelper implements InputHelper {
 	}
 
 	@Override
-	public boolean state(boolean currentKeyState) {
+	public void update(boolean currentKeyState) {
 		if (!currentKeyState) {
+			this.held = false;
 			this.pressed = false;
-			return false;
+		} else {
+			if (this.pressed) {
+				this.held = true;
+			}
+			this.pressed = true;
 		}
-		if (this.pressed) {
-			return false;
-		}
-		this.pressed = true;
-		return true;
+	}
+
+	@Override
+	public boolean state() {
+		return this.pressed && !this.held;
 	}
 }
