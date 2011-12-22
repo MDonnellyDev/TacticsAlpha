@@ -32,6 +32,25 @@ public class ScreenRenderer extends Component {
 	private final static int TEXT_SPACING = 5;
 	private final static int TEXT_BORDERS = 5;
 
+	// COLORS
+	private final Color screenBackgroundColor = new Color(0, 0, 0);
+	private final Color hpBackgroundColor = new Color(63, 0, 0);
+	private final Color hpForegroundColor = new Color(255, 0, 0);
+	private final Color mpBackgroundColor = new Color(0, 0, 63);
+	private final Color mpForegroundColor = new Color(0, 0, 255);
+	private final Color menuBackgroundColor = new Color(160, 160, 160);
+	private final Color menuBorderColor = new Color(63, 63, 63);
+	private final Color textColor = new Color(0, 0, 0);
+	private final Color selectedTextColor = new Color(255, 255, 255);
+
+	// TEMPORARY
+	// TODO: These are currently using different colors, but should eventually
+	// be textures or other effects.
+	private final Color actorColor = new Color(255, 255, 0);
+	private final Color genericTerrainColor = new Color(191, 191, 191);
+	private final Color impassableTerrainColor = new Color(63, 63, 63);
+	private final Color selectedTileColor = new Color(0, 255, 255);
+
 	public ScreenRenderer() {
 
 	}
@@ -52,7 +71,7 @@ public class ScreenRenderer extends Component {
 		this.renderActors(actors);
 
 		// Menu and Info
-		this.fill(this.textSpace, Color.BLACK);
+		this.fill(this.textSpace, this.screenBackgroundColor);
 		this.renderMenu(menu);
 		this.renderMessage(game.getMessage());
 		this.renderActorInfo(grid.getSelectedTile().getOccupant());
@@ -74,15 +93,15 @@ public class ScreenRenderer extends Component {
 	}
 
 	private void renderGrid(Grid grid) {
-		this.fill(this.gridSpace, Color.BLACK);
+		this.fill(this.gridSpace, this.screenBackgroundColor);
 		Tile[][] tiles = grid.getTiles();
 		GridPoint selectedLocation = grid.getSelectedLocation();
 		for (int y = 0; y < grid.height; y++) {
 			for (int x = 0; x < grid.width; x++) {
 				Tile tile = tiles[y][x];
-				Color color = tile.isImpassable() ? Color.DARK_GRAY : Color.LIGHT_GRAY;
+				Color color = tile.isImpassable() ? this.impassableTerrainColor : this.genericTerrainColor;
 				if (selectedLocation.matches(x, y)) {
-					color = Color.BLUE;
+					color = this.selectedTileColor;
 				}
 				this.fill(this.getTileRectangle(x, y), color);
 			}
@@ -92,13 +111,13 @@ public class ScreenRenderer extends Component {
 	private void renderActors(Collection<Actor> actors) {
 		for (Actor actor : actors) {
 			GridPoint actorLocation = actor.getLocation();
-			this.fill(this.getActorRectangle(actorLocation.getColumn(), actorLocation.getRow()), Color.YELLOW);
+			this.fill(this.getActorRectangle(actorLocation.getColumn(), actorLocation.getRow()), this.actorColor);
 		}
 	}
 
 	private void renderMenu(Menu menu) {
-		this.fill(this.menuSpace, Color.GRAY);
-		this.border(this.menuSpace, Color.DARK_GRAY, ScreenRenderer.TEXT_BORDERS);
+		this.fill(this.menuSpace, this.menuBackgroundColor);
+		this.border(this.menuSpace, this.menuBorderColor, ScreenRenderer.TEXT_BORDERS);
 
 		if (menu == null) {
 			return;
@@ -116,36 +135,36 @@ public class ScreenRenderer extends Component {
 		for (int i = 0; i < options.size(); i++) {
 			String option = options.get(i);
 			if (i == selectedIndex) {
-				this.graphics.setColor(Color.WHITE);
+				this.graphics.setColor(this.selectedTextColor);
 			} else {
-				this.graphics.setColor(Color.BLACK);
+				this.graphics.setColor(this.textColor);
 			}
 			this.graphics.drawString(option, left, this.menuSpace.top + ((i + 1) * fontHeight));
 		}
 	}
 
 	private void renderMessage(String message) {
-		this.fill(this.messageSpace, Color.GRAY);
-		this.border(this.messageSpace, Color.DARK_GRAY, ScreenRenderer.TEXT_BORDERS);
+		this.fill(this.messageSpace, this.menuBackgroundColor);
+		this.border(this.messageSpace, this.menuBorderColor, ScreenRenderer.TEXT_BORDERS);
 
 		if (message == null) {
 			return;
 		}
 
-		this.graphics.setColor(Color.BLACK);
+		this.graphics.setColor(this.textColor);
 		this.graphics.setFont(new Font("Arial", Font.PLAIN, 20));
 		this.graphics.drawString(message, this.messageSpace.left + 15, this.messageSpace.top + this.graphics.getFontMetrics().getHeight());
 	}
 
 	private void renderActorInfo(Actor actor) {
-		this.fill(this.actorSpace, Color.GRAY);
-		this.border(this.actorSpace, Color.DARK_GRAY, ScreenRenderer.TEXT_BORDERS);
+		this.fill(this.actorSpace, this.menuBackgroundColor);
+		this.border(this.actorSpace, this.menuBorderColor, ScreenRenderer.TEXT_BORDERS);
 
 		if (actor == null) {
 			return;
 		}
 
-		this.graphics.setColor(Color.BLACK);
+		this.graphics.setColor(this.textColor);
 		this.graphics.setFont(new Font("Courier New", Font.BOLD, 20));
 		int fontHeight = this.graphics.getFontMetrics().getHeight();
 		this.graphics.drawString("HP:", this.actorSpace.left + 15, this.actorSpace.top + fontHeight);
@@ -162,17 +181,17 @@ public class ScreenRenderer extends Component {
 		int topBuffer = this.graphics.getFontMetrics().getDescent() + this.graphics.getFontMetrics().getLeading() + 1;
 		// HP
 		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + topBuffer, this.actorSpace.getHorizontalCenter(), this.actorSpace.top
-				+ (fontHeight * 2) - bottomBuffer), new Color(127, 0, 0));
+				+ (fontHeight * 2) - bottomBuffer), this.hpBackgroundColor);
 		int barWidth = this.actorSpace.getHorizontalCenter() - (this.actorSpace.left + textOffset);
 		int currentHpWidth = (int) (barWidth * ((float) actor.getCurrentHealth() / (float) actor.getMaxHealth()));
 		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + topBuffer, this.actorSpace.left + textOffset + currentHpWidth,
-				this.actorSpace.top + (fontHeight * 2) - bottomBuffer), Color.RED);
+				this.actorSpace.top + (fontHeight * 2) - bottomBuffer), this.hpForegroundColor);
 		// MP Background
 		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + fontHeight + topBuffer, this.actorSpace.getHorizontalCenter(),
-				this.actorSpace.top + (fontHeight * 3) - bottomBuffer), new Color(0, 0, 127));
+				this.actorSpace.top + (fontHeight * 3) - bottomBuffer), this.mpBackgroundColor);
 		int currentMpWidth = (int) (barWidth * ((float) actor.getCurrentMana() / (float) actor.getMaxMana()));
 		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + fontHeight + topBuffer, this.actorSpace.left + textOffset
-				+ currentMpWidth, this.actorSpace.top + (fontHeight * 3) - bottomBuffer), Color.BLUE);
+				+ currentMpWidth, this.actorSpace.top + (fontHeight * 3) - bottomBuffer), this.mpForegroundColor);
 
 	}
 
