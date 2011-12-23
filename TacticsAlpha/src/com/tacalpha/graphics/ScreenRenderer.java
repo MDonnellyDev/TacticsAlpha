@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.tacalpha.Game;
 import com.tacalpha.actor.Actor;
@@ -53,6 +54,7 @@ public class ScreenRenderer extends Component {
 	private final Color genericTerrainColor = new Color(191, 191, 191);
 	private final Color impassableTerrainColor = new Color(63, 63, 63);
 	private final Color selectedTileColor = new Color(0, 255, 255);
+	private final Color targetTileColor = new Color(127, 255, 127);
 
 	public ScreenRenderer() {
 
@@ -72,7 +74,7 @@ public class ScreenRenderer extends Component {
 		this.tileSize = game.getTileSize();
 
 		// Grid
-		this.renderGrid(grid);
+		this.renderGrid(grid, game.getTargetLocations());
 		this.renderActors(actors);
 
 		// Menu and Info
@@ -100,7 +102,7 @@ public class ScreenRenderer extends Component {
 		this.tileSize = 50;
 	}
 
-	private void renderGrid(Grid grid) {
+	private void renderGrid(Grid grid, Set<GridPoint> targetLocations) {
 		this.fill(this.gridSpace, this.screenBackgroundColor);
 		Tile[][] tiles = grid.getTiles();
 		GridPoint selectedLocation = grid.getSelectedLocation();
@@ -109,6 +111,9 @@ public class ScreenRenderer extends Component {
 			for (int x = 0; x < grid.width; x++) {
 				Tile tile = tiles[y][x];
 				Color color = tile.isImpassable() ? this.impassableTerrainColor : this.genericTerrainColor;
+				if (targetLocations != null && targetLocations.contains(new GridPoint(x, y))) {
+					color = this.targetTileColor;
+				}
 				if (selectedLocation.matches(x, y)) {
 					color = this.selectedTileColor;
 				}

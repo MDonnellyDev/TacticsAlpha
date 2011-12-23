@@ -8,6 +8,7 @@ public class Actor {
 	private int yLocation;
 	private int currentHealth;
 	private int currentMana;
+	private int moveSpeed;
 
 	// Static
 	private int maxHealth;
@@ -17,6 +18,7 @@ public class Actor {
 	public Actor(int x, int y) {
 		this.xLocation = x;
 		this.yLocation = y;
+		this.moveSpeed = 5;
 	}
 
 	public void configure(int maxHealth, int maxMana) {
@@ -67,5 +69,9 @@ public class Actor {
 
 	public int getCurrentMana() {
 		return this.currentMana;
+	}
+
+	public int getMoveSpeed() {
+		return this.moveSpeed;
 	}
 }
