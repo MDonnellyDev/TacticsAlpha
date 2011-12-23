@@ -150,11 +150,18 @@ public class Game {
 				}
 			} else {
 				if (this.state.equals(GameState.MOVING)) {
-					if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
-						this.message = null;
-						this.showMessage = false;
-						this.currentActor = null;
-						this.state = GameState.INPUT;
+					if (this.targetLocations.contains(this.grid.getSelectedLocation())) {
+						if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
+							this.message = null;
+							this.showMessage = false;
+							this.currentActor = null;
+							this.targetLocations = null;
+							this.state = GameState.INPUT;
+						} else {
+							this.message = "Cannot move there.";
+						}
+					} else {
+						this.message = "Cannot move that far.";
 					}
 				}
 			}
