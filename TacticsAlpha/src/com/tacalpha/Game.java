@@ -170,6 +170,7 @@ public class Game {
 				this.message = null;
 				this.showMessage = false;
 				this.currentActor = null;
+				this.targetLocations = null;
 				this.state = GameState.INPUT;
 			}
 		}
