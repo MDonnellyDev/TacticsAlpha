@@ -13,12 +13,16 @@ public class Actor {
 	// Static
 	private int maxHealth;
 	private int maxMana;
+	private int strength;
+	private int defense;
 
 	// Configuration Methods
 	public Actor(int x, int y) {
 		this.xLocation = x;
 		this.yLocation = y;
 		this.moveSpeed = 5;
+		this.strength = 10;
+		this.defense = 10;
 	}
 
 	public void configure(int maxHealth, int maxMana) {
@@ -73,5 +77,13 @@ public class Actor {
 
 	public int getMoveSpeed() {
 		return this.moveSpeed;
+	}
+
+	public int getStrength() {
+		return this.strength;
+	}
+
+	public int getDefense() {
+		return this.defense;
 	}
 }

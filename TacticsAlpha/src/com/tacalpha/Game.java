@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import com.tacalpha.actor.Actor;
@@ -45,6 +46,7 @@ public class Game {
 
 	// Meta Information
 	private int tileSize;
+	private final Random random = new Random();
 
 	public Game() {
 		// TODO: Temporary testing code.
@@ -118,6 +120,13 @@ public class Game {
 						this.message = "Moving. Press ENTER to place or ESC to cancel.";
 						this.showMessage = true;
 						break;
+					case ATTACK:
+						this.currentActor = this.grid.getSelectedTile().getOccupant();
+						this.state = GameState.ATTACKING;
+						this.targetLocations = this.grid.getAdjacentSquares(this.grid.getSelectedLocation());
+						this.message = "Attacking. Press ENTER to choose your target or ESC to cancel.";
+						this.showMessage = true;
+						break;
 					case DELETE:
 						this.actors.remove(this.grid.getSelectedTile().getOccupant());
 						this.grid.removeSelectedActor();
@@ -148,30 +157,38 @@ public class Game {
 				if (this.grid.getSelectedTile().getOccupant() != null) {
 					this.activeMenu = new BattleActionMenu();
 				}
-			} else {
-				if (this.state.equals(GameState.MOVING)) {
-					if (this.targetLocations.contains(this.grid.getSelectedLocation())) {
-						if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
-							this.message = null;
-							this.showMessage = false;
-							this.currentActor = null;
-							this.targetLocations = null;
-							this.state = GameState.INPUT;
-						} else {
-							this.message = "Cannot move there.";
-						}
+			} else if (this.state.equals(GameState.MOVING)) {
+				if (this.targetLocations.contains(this.grid.getSelectedLocation())) {
+					if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
+						this.clearGameState();
 					} else {
-						this.message = "Cannot move that far.";
+						this.message = "Cannot move there.";
 					}
+				} else {
+					this.message = "Cannot move that far.";
+				}
+
+			} else if (this.state.equals(GameState.ATTACKING)) {
+				if (this.targetLocations.contains(this.grid.getSelectedLocation())) {
+					Actor target = this.grid.getSelectedTile().getOccupant();
+					if (target != null) {
+						int attackerStrength = this.currentActor.getStrength();
+						int targetDefense = target.getDefense();
+						double baseDamage = attackerStrength * (this.random.nextDouble() / 2.0 + 0.9);
+						int damage = (int) (baseDamage * (100.0 / (100.0 + targetDefense)));
+						System.out.println(damage);
+						target.damage(damage);
+						if (target.getCurrentHealth() <= 0) {
+							this.actors.remove(target);
+							this.grid.getTile(target.getLocation()).setOccupant(null);
+						}
+					}
+					this.clearGameState();
 				}
 			}
 		} else if (this.escHelper.state()) {
 			if (this.state.equals(GameState.MOVING)) {
-				this.message = null;
-				this.showMessage = false;
-				this.currentActor = null;
-				this.targetLocations = null;
-				this.state = GameState.INPUT;
+				this.clearGameState();
 			}
 		}
 	}
@@ -188,6 +205,14 @@ public class Game {
 				this.message = "Normal square.";
 			}
 		}
+	}
+
+	private void clearGameState() {
+		this.message = null;
+		this.showMessage = false;
+		this.currentActor = null;
+		this.targetLocations = null;
+		this.state = GameState.INPUT;
 	}
 
 	// TODO: Remove this method. We should be returning an entire scene for the
