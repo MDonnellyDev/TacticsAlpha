@@ -28,4 +28,18 @@ public class GridPoint {
 	public boolean matches(int column, int row) {
 		return this.column == column && this.row == row;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof GridPoint)) {
+			return false;
+		}
+		GridPoint target = (GridPoint) o;
+		return this.row == target.row && this.column == target.column;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.row + (this.column << 8);
+	}
 }
