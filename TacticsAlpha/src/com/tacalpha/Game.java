@@ -4,10 +4,12 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.tacalpha.actor.Actor;
 import com.tacalpha.grid.Direction;
 import com.tacalpha.grid.Grid;
+import com.tacalpha.grid.GridPoint;
 import com.tacalpha.grid.Tile;
 import com.tacalpha.input.InputHelper;
 import com.tacalpha.input.InputRepeatHelper;
@@ -35,6 +37,7 @@ public class Game {
 	private Actor currentActor;
 	private Menu activeMenu;
 	private GameState state;
+	private Set<GridPoint> targetLocations;
 
 	// Player Display stuff
 	private String message;
@@ -111,6 +114,7 @@ public class Game {
 					case MOVE:
 						this.currentActor = this.grid.getSelectedTile().getOccupant();
 						this.state = GameState.MOVING;
+						this.targetLocations = this.grid.getMoveRadius(this.grid.getSelectedLocation(), this.currentActor.getMoveSpeed());
 						this.message = "Moving. Press ENTER to place or ESC to cancel.";
 						this.showMessage = true;
 						break;
@@ -198,5 +202,9 @@ public class Game {
 
 	public int getTileSize() {
 		return this.tileSize;
+	}
+
+	public Set<GridPoint> getTargetLocations() {
+		return this.targetLocations;
 	}
 }
