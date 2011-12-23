@@ -67,6 +67,10 @@ public class Grid {
 		return this.tiles[this.currentYPosition][this.currentXPosition];
 	}
 
+	public Tile getTile(GridPoint location) {
+		return this.tiles[location.getRow()][location.getColumn()];
+	}
+
 	public Tile[][] getTiles() {
 		return this.tiles;
 	}
@@ -175,6 +179,25 @@ public class Grid {
 					}
 				}
 			}
+		}
+		return results;
+	}
+
+	public Set<GridPoint> getAdjacentSquares(GridPoint location) {
+		Set<GridPoint> results = new HashSet<GridPoint>();
+		int x = location.getColumn();
+		int y = location.getRow();
+		if (this.isInBounds(x - 1, y)) {
+			results.add(new GridPoint(x - 1, y));
+		}
+		if (this.isInBounds(x + 1, y)) {
+			results.add(new GridPoint(x + 1, y));
+		}
+		if (this.isInBounds(x, y - 1)) {
+			results.add(new GridPoint(x, y - 1));
+		}
+		if (this.isInBounds(x, y + 1)) {
+			results.add(new GridPoint(x, y + 1));
 		}
 		return results;
 	}
