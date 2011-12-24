@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Set;
 
 import com.tacalpha.actor.Actor;
+import com.tacalpha.equip.LongSword;
 import com.tacalpha.grid.Direction;
 import com.tacalpha.grid.Grid;
 import com.tacalpha.grid.GridPoint;
@@ -57,6 +58,7 @@ public class Game {
 		temp.prep();
 		temp.damage(25);
 		this.actors.add(temp);
+		temp.equip(new LongSword());
 		temp = new Actor(2, 3);
 		temp.configure(120, 45);
 		temp.prep();
