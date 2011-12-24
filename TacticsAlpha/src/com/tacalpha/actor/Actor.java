@@ -13,6 +13,7 @@ public class Actor {
 	private int currentHealth;
 	private int currentMana;
 	private int moveSpeed;
+	private int actionSpeed;
 
 	// Static
 	private int maxHealth;
@@ -28,6 +29,7 @@ public class Actor {
 		this.xLocation = x;
 		this.yLocation = y;
 		this.moveSpeed = 5;
+		this.actionSpeed = 5;
 		this.strength = 10;
 		this.defense = 10;
 	}
@@ -92,11 +94,16 @@ public class Actor {
 		}
 	}
 
+	public Equipment getEquipment(Equipment.Slot slot) {
+		return this.equipment.get(slot);
+	}
+
 	private void applyStats(Equipment item) {
 		if (item != null) {
 			this.maxHealth += item.getHpModifier();
 			this.maxMana += item.getMpModifier();
-			this.moveSpeed += item.getSpeedModifier();
+			this.moveSpeed += item.getMoveSpeedModifier();
+			this.actionSpeed += item.getActionSpeedModifier();
 			this.strength += item.getStrengthModifier();
 			this.defense += item.getDefenseModifier();
 		}
@@ -106,7 +113,8 @@ public class Actor {
 		if (item != null) {
 			this.maxHealth -= item.getHpModifier();
 			this.maxMana -= item.getMpModifier();
-			this.moveSpeed -= item.getSpeedModifier();
+			this.moveSpeed -= item.getMoveSpeedModifier();
+			this.actionSpeed -= item.getActionSpeedModifier();
 			this.strength -= item.getStrengthModifier();
 			this.defense -= item.getDefenseModifier();
 		}
@@ -151,6 +159,10 @@ public class Actor {
 
 	public int getMoveSpeed() {
 		return this.moveSpeed;
+	}
+
+	public int getActionSpeed() {
+		return this.actionSpeed;
 	}
 
 	public int getStrength() {

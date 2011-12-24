@@ -7,7 +7,8 @@ public abstract class Equipment {
 
 	protected int strengthModifier = 0;
 	protected int defenseModifier = 0;
-	protected int speedModifier = 0;
+	protected int moveSpeedModifier = 0;
+	protected int actionSpeedModifier = 0;
 	protected int hpModifier = 0;
 	protected int mpModifier = 0;
 	protected String name = "";
@@ -22,8 +23,12 @@ public abstract class Equipment {
 		return this.defenseModifier;
 	}
 
-	public int getSpeedModifier() {
-		return this.speedModifier;
+	public int getMoveSpeedModifier() {
+		return this.moveSpeedModifier;
+	}
+
+	public int getActionSpeedModifier() {
+		return this.actionSpeedModifier;
 	}
 
 	public int getHpModifier() {
@@ -36,6 +41,10 @@ public abstract class Equipment {
 
 	public Slot getSlot() {
 		return this.slot;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 
 	public boolean fitsSlot(Slot slot) {

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.tacalpha.Game;
 import com.tacalpha.actor.Actor;
+import com.tacalpha.equip.Equipment;
 import com.tacalpha.grid.Grid;
 import com.tacalpha.grid.GridPoint;
 import com.tacalpha.grid.Tile;
@@ -178,19 +179,46 @@ public class ScreenRenderer extends Component {
 			return;
 		}
 
+		// Setup
 		this.graphics.setColor(this.textColor);
 		this.graphics.setFont(new Font("Courier New", Font.BOLD, 20));
 		int fontHeight = this.graphics.getFontMetrics().getHeight();
-		this.graphics.drawString("HP:", this.actorSpace.left + 15, this.actorSpace.top + fontHeight);
-		this.graphics.drawString("MP:", this.actorSpace.left + 15, this.actorSpace.top + (fontHeight * 2));
-		this.graphics.drawString(actor.getCurrentHealth() + " / " + actor.getMaxHealth(), this.actorSpace.getHorizontalCenter() + 5, this.actorSpace.top
-				+ fontHeight);
-		this.graphics.drawString(actor.getCurrentMana() + " / " + actor.getMaxMana(), this.actorSpace.getHorizontalCenter() + 5, this.actorSpace.top
-				+ (fontHeight * 2));
+		int leftFontPadding = this.actorSpace.left + 15;
 
-		// TODO: Calculate how many pixels the HP: and MP: text takes up instead
-		// of guessing.
-		int textOffset = 50;
+		// Statistics
+		this.graphics.drawString("HP:", leftFontPadding, this.actorSpace.top + fontHeight);
+		this.graphics.drawString("MP:", leftFontPadding, this.actorSpace.top + (fontHeight * 2));
+		this.graphics.drawString("Move Speed: " + actor.getMoveSpeed(), leftFontPadding, this.actorSpace.top + (fontHeight * 3));
+		this.graphics.drawString("Strength: " + actor.getStrength(), leftFontPadding, this.actorSpace.top + (fontHeight * 4));
+		this.graphics.drawString("Defense: " + actor.getDefense(), leftFontPadding, this.actorSpace.top + (fontHeight * 5));
+		this.graphics.drawString("Agility: " + actor.getActionSpeed(), leftFontPadding, this.actorSpace.top + (fontHeight * 6));
+
+		// Current/Total Numbers
+		String tempStr = actor.getCurrentHealth() + "/" + actor.getMaxHealth();
+		int barNumberAreaWidth = this.graphics.getFontMetrics().stringWidth(tempStr);
+		this.graphics.drawString(tempStr, this.actorSpace.getHorizontalCenter() + 5, this.actorSpace.top + fontHeight);
+		tempStr = actor.getCurrentMana() + "/" + actor.getMaxMana();
+		barNumberAreaWidth = Math.max(barNumberAreaWidth, this.graphics.getFontMetrics().stringWidth(tempStr));
+		this.graphics.drawString(tempStr, this.actorSpace.getHorizontalCenter() + 5, this.actorSpace.top + (fontHeight * 2));
+
+		// Equipment
+		int rightColumnPadding = this.actorSpace.getHorizontalCenter() + barNumberAreaWidth + 25;
+		this.graphics.drawString("EQUIPMENT", rightColumnPadding, this.actorSpace.top + fontHeight);
+		Equipment temp = actor.getEquipment(Equipment.Slot.MAINHAND);
+		this.graphics.drawString("RH: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 2));
+		temp = actor.getEquipment(Equipment.Slot.OFFHAND);
+		this.graphics.drawString("LH: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 3));
+		temp = actor.getEquipment(Equipment.Slot.HEAD);
+		this.graphics.drawString("HD: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 4));
+		temp = actor.getEquipment(Equipment.Slot.BODY);
+		this.graphics.drawString("BD: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 5));
+		temp = actor.getEquipment(Equipment.Slot.FEET);
+		this.graphics.drawString("FT: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 6));
+		temp = actor.getEquipment(Equipment.Slot.OTHER);
+		this.graphics.drawString("AC: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 7));
+
+		// Current/Total Bars
+		int textOffset = 15 + this.graphics.getFontMetrics().stringWidth("HP:");
 		int bottomBuffer = this.graphics.getFontMetrics().getAscent() + 1;
 		int topBuffer = this.graphics.getFontMetrics().getDescent() + this.graphics.getFontMetrics().getLeading() + 1;
 		// HP
@@ -200,7 +228,7 @@ public class ScreenRenderer extends Component {
 		int currentHpWidth = (int) (barWidth * ((float) actor.getCurrentHealth() / (float) actor.getMaxHealth()));
 		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + topBuffer, this.actorSpace.left + textOffset + currentHpWidth,
 				this.actorSpace.top + (fontHeight * 2) - bottomBuffer), this.hpForegroundColor);
-		// MP Background
+		// MP
 		this.fill(new Rectangle(this.actorSpace.left + textOffset, this.actorSpace.top + fontHeight + topBuffer, this.actorSpace.getHorizontalCenter(),
 				this.actorSpace.top + (fontHeight * 3) - bottomBuffer), this.mpBackgroundColor);
 		int currentMpWidth = (int) (barWidth * ((float) actor.getCurrentMana() / (float) actor.getMaxMana()));
