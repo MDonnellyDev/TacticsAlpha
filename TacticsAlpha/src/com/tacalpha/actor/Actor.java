@@ -1,5 +1,8 @@
 package com.tacalpha.actor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.tacalpha.equip.Equipment;
 import com.tacalpha.grid.GridPoint;
 
@@ -18,12 +21,7 @@ public class Actor {
 	private int defense;
 
 	// Equipment
-	private Equipment leftHand;
-	private Equipment rightHand;
-	private Equipment head;
-	private Equipment body;
-	private Equipment feet;
-	private Equipment other;
+	private Map<Equipment.Slot, Equipment> equipment = new HashMap<Equipment.Slot, Equipment>();
 
 	// Configuration Methods
 	public Actor(int x, int y) {
@@ -51,49 +49,46 @@ public class Actor {
 	 * @param item
 	 *            The item to equip. It will automatically be placed into an
 	 *            appropriate slot, replacing whatever was already there.
-	 * @return The item that was un-equipped in order to equip this item.
+	 * @return The item that was un-equipped in order to equip this item, or
+	 *         null if no item was equipped.
 	 */
 	public Equipment equip(Equipment item) {
-		Equipment old = null;
 		switch (item.getSlot()) {
 			case HAND:
-				if (this.rightHand == null) {
-					this.applyStats(item);
-					this.rightHand = item;
-					return null;
+				if (this.equipment.get(Equipment.Slot.MAINHAND) == null) {
+					return this.equip(item, Equipment.Slot.MAINHAND);
 				} else {
-					old = this.leftHand;
-					this.removeStats(old);
-					this.applyStats(item);
-					this.leftHand = item;
-					return old;
+					return this.equip(item, Equipment.Slot.OFFHAND);
 				}
-			case HEAD:
-				old = this.head;
-				this.removeStats(old);
-				this.applyStats(item);
-				this.head = item;
-				return old;
-			case BODY:
-				old = this.body;
-				this.removeStats(old);
-				this.applyStats(item);
-				this.body = item;
-				return old;
-			case FEET:
-				old = this.feet;
-				this.removeStats(old);
-				this.applyStats(item);
-				this.feet = item;
-				return old;
-			case OTHER:
-				old = this.other;
-				this.removeStats(old);
-				this.applyStats(item);
-				this.other = item;
-				return old;
 			default:
-				return null;
+				return this.equip(item, item.getSlot());
+		}
+	}
+
+	/**
+	 * Equip an item to a specific slot, if possible.
+	 * 
+	 * @param item
+	 *            The item to equip.
+	 * @param slot
+	 *            The slot to equip it to. HAND is not a valid slot; this method
+	 *            should be given a specific slot.
+	 * @return The old item that was equipped in that slot, if there was an item
+	 *         to replace. Null, if there was no item to replace. The item
+	 *         passed into the method, if no replacement was made.
+	 */
+	public Equipment equip(Equipment item, Equipment.Slot slot) {
+		if (Equipment.Slot.HAND.equals(slot)) {
+			return item;
+		}
+		if (item.fitsSlot(slot)) {
+			Equipment old = this.equipment.get(slot);
+			this.removeStats(old);
+			this.applyStats(item);
+			this.equipment.put(slot, item);
+			return old;
+		} else {
+			return item;
 		}
 	}
 
