@@ -178,7 +178,6 @@ public class Game {
 						int targetDefense = target.getDefense();
 						double baseDamage = attackerStrength * (this.random.nextDouble() / 2.0 + 0.9);
 						int damage = (int) (baseDamage * (100.0 / (100.0 + targetDefense)));
-						System.out.println(damage);
 						target.damage(damage);
 						if (target.getCurrentHealth() <= 0) {
 							this.actors.remove(target);

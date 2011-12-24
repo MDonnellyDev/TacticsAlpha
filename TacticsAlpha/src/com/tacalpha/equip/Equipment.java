@@ -2,7 +2,7 @@ package com.tacalpha.equip;
 
 public abstract class Equipment {
 	public enum Slot {
-		HAND, HEAD, BODY, FEET, OTHER
+		HAND, HEAD, BODY, FEET, OTHER, MAINHAND, OFFHAND
 	}
 
 	protected int strengthModifier = 0;
@@ -10,6 +10,7 @@ public abstract class Equipment {
 	protected int speedModifier = 0;
 	protected int hpModifier = 0;
 	protected int mpModifier = 0;
+	protected String name = "";
 
 	protected Slot slot = Slot.HAND;
 
@@ -35,5 +36,15 @@ public abstract class Equipment {
 
 	public Slot getSlot() {
 		return this.slot;
+	}
+
+	public boolean fitsSlot(Slot slot) {
+		if (Slot.HAND.equals(this.slot)) {
+			// HAND indicates it can be equipped to either hand.
+			return Slot.MAINHAND.equals(slot) || Slot.OFFHAND.equals(slot) || this.slot.equals(slot);
+		} else {
+			// Everything else must match exactly.
+			return this.slot.equals(slot);
+		}
 	}
 }
