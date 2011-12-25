@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tacalpha.equip.Equipment;
+import com.tacalpha.equip.Slot;
 import com.tacalpha.grid.GridPoint;
 
 public class Actor {
@@ -22,7 +23,7 @@ public class Actor {
 	private int defense;
 
 	// Equipment
-	private Map<Equipment.Slot, Equipment> equipment = new HashMap<Equipment.Slot, Equipment>();
+	private Map<Slot, Equipment> equipment = new HashMap<Slot, Equipment>();
 
 	// Configuration Methods
 	public Actor(int x, int y) {
@@ -57,10 +58,10 @@ public class Actor {
 	public Equipment equip(Equipment item) {
 		switch (item.getSlot()) {
 			case HAND:
-				if (this.equipment.get(Equipment.Slot.MAINHAND) == null) {
-					return this.equip(item, Equipment.Slot.MAINHAND);
+				if (this.equipment.get(Slot.MAINHAND) == null) {
+					return this.equip(item, Slot.MAINHAND);
 				} else {
-					return this.equip(item, Equipment.Slot.OFFHAND);
+					return this.equip(item, Slot.OFFHAND);
 				}
 			default:
 				return this.equip(item, item.getSlot());
@@ -79,8 +80,8 @@ public class Actor {
 	 *         to replace. Null, if there was no item to replace. The item
 	 *         passed into the method, if no replacement was made.
 	 */
-	public Equipment equip(Equipment item, Equipment.Slot slot) {
-		if (Equipment.Slot.HAND.equals(slot)) {
+	public Equipment equip(Equipment item, Slot slot) {
+		if (Slot.HAND.equals(slot)) {
 			return item;
 		}
 		if (item.fitsSlot(slot)) {
@@ -94,7 +95,7 @@ public class Actor {
 		}
 	}
 
-	public Equipment getEquipment(Equipment.Slot slot) {
+	public Equipment getEquipment(Slot slot) {
 		return this.equipment.get(slot);
 	}
 

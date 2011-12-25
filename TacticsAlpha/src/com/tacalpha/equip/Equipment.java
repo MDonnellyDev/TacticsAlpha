@@ -1,10 +1,6 @@
 package com.tacalpha.equip;
 
 public abstract class Equipment {
-	public enum Slot {
-		HAND, HEAD, BODY, FEET, OTHER, MAINHAND, OFFHAND
-	}
-
 	protected int strengthModifier = 0;
 	protected int defenseModifier = 0;
 	protected int moveSpeedModifier = 0;
