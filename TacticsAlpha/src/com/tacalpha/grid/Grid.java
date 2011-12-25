@@ -9,6 +9,7 @@ import com.tacalpha.actor.Actor;
 public class Grid {
 	private final Tile[][] tiles;
 	private Set<GridPoint> targetableTiles;
+	private AreaOfEffect currentEffectAOE;
 	public final int width;
 	public final int height;
 
@@ -113,6 +114,10 @@ public class Grid {
 		return this.targetableTiles;
 	}
 
+	public AreaOfEffect getCurrentAOE() {
+		return this.currentEffectAOE;
+	}
+
 	/**
 	 * Search for all tiles that can be accessed starting at the centerPoint and
 	 * moving radius or less.
@@ -206,11 +211,28 @@ public class Grid {
 		}
 	}
 
-	public void clearTargetRestrictions() {
-		this.targetableTiles = null;
+	public void setAreaOfEffect(AreaOfEffect areaOfEffect) {
+		this.currentEffectAOE = areaOfEffect;
+		this.currentEffectAOE.setGrid(this);
 	}
 
-	private boolean isInBounds(int x, int y) {
+	public Set<Actor> getTargetsOfCurrentEffect() {
+		Set<Actor> results = new HashSet<Actor>();
+		for (GridPoint point : this.currentEffectAOE.getAllAffectedLocations(this.getSelectedLocation())) {
+			Tile tile = this.tiles[point.getRow()][point.getColumn()];
+			if (tile.getOccupant() != null) {
+				results.add(tile.getOccupant());
+			}
+		}
+		return results;
+	}
+
+	public void clearTargetingLayer() {
+		this.targetableTiles = null;
+		this.currentEffectAOE = null;
+	}
+
+	public boolean isInBounds(int x, int y) {
 		return !(x < 0 || y < 0 || x >= this.width || y >= this.height);
 	}
 }
