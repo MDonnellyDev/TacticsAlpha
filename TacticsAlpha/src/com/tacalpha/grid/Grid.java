@@ -29,39 +29,39 @@ public class Grid {
 		this.width = this.tiles[0].length;
 	}
 
-	public void moveSelectedLocation(Direction direction) {
+	public boolean moveSelectedLocation(Direction direction) {
+		GridPoint destination = null;
 		switch (direction) {
 			case UP:
-				this.currentYPosition--;
-				if (this.currentYPosition < 0) {
-					this.currentYPosition = this.height - 1;
-				}
+				destination = new GridPoint(this.currentXPosition, this.currentYPosition == 0 ? this.height - 1 : this.currentYPosition - 1);
 				break;
 			case DOWN:
-				this.currentYPosition++;
-				if (this.currentYPosition >= this.height) {
-					this.currentYPosition = 0;
-				}
+				destination = new GridPoint(this.currentXPosition, this.currentYPosition == this.height - 1 ? 0 : this.currentYPosition + 1);
 				break;
 			case LEFT:
-				this.currentXPosition--;
-				if (this.currentXPosition < 0) {
-					this.currentXPosition = this.width - 1;
-				}
+				destination = new GridPoint(this.currentXPosition == 0 ? this.width - 1 : this.currentXPosition - 1, this.currentYPosition);
 				break;
 			case RIGHT:
-				this.currentXPosition++;
-				if (this.currentXPosition >= this.width) {
-					this.currentXPosition = 0;
-				}
+				destination = new GridPoint(this.currentXPosition == this.width - 1 ? 0 : this.currentXPosition + 1, this.currentYPosition);
 				break;
 			default:
 				break;
+		}
+		if (this.targetableTiles == null || this.targetableTiles.contains(destination)) {
+			this.setSelectedLocation(destination);
+			return true;
+		} else {
+			return false;
 		}
 	}
 
 	public GridPoint getSelectedLocation() {
 		return new GridPoint(this.currentXPosition, this.currentYPosition);
+	}
+
+	private void setSelectedLocation(GridPoint destination) {
+		this.currentXPosition = destination.getColumn();
+		this.currentYPosition = destination.getRow();
 	}
 
 	public Tile getSelectedTile() {
@@ -189,6 +189,7 @@ public class Grid {
 
 	public void setTargetAdjacentSquares(GridPoint location) {
 		this.targetableTiles = new HashSet<GridPoint>();
+		this.targetableTiles.add(location);
 		int x = location.getColumn();
 		int y = location.getRow();
 		if (this.isInBounds(x - 1, y)) {
