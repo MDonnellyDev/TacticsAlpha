@@ -13,6 +13,7 @@ import com.tacalpha.Game;
 import com.tacalpha.actor.Actor;
 import com.tacalpha.equip.Equipment;
 import com.tacalpha.equip.Slot;
+import com.tacalpha.grid.AreaOfEffect;
 import com.tacalpha.grid.Grid;
 import com.tacalpha.grid.GridPoint;
 import com.tacalpha.grid.Tile;
@@ -57,6 +58,7 @@ public class ScreenRenderer extends Component {
 	private final Color impassableTerrainColor = new Color(63, 63, 63);
 	private final Color selectedTileColor = new Color(0, 255, 255);
 	private final Color targetTileColor = new Color(127, 255, 127);
+	private final Color aoeTileColor = new Color(255, 63, 63);
 
 	public ScreenRenderer() {
 
@@ -110,15 +112,20 @@ public class ScreenRenderer extends Component {
 		GridPoint selectedLocation = grid.getSelectedLocation();
 		this.calculateGridOffset(grid, selectedLocation);
 		Set<GridPoint> targetLocations = grid.getTargetTiles();
+		AreaOfEffect areaOfEffect = grid.getCurrentAOE();
 		for (int y = 0; y < grid.height; y++) {
 			for (int x = 0; x < grid.width; x++) {
 				Tile tile = tiles[y][x];
+				GridPoint currentGridPoint = new GridPoint(x, y);
 				Color color = tile.isImpassable() ? this.impassableTerrainColor : this.genericTerrainColor;
-				if (targetLocations != null && targetLocations.contains(new GridPoint(x, y))) {
+				if (targetLocations != null && targetLocations.contains(currentGridPoint)) {
 					color = this.targetTileColor;
 				}
 				if (selectedLocation.matches(x, y)) {
 					color = this.selectedTileColor;
+				}
+				if(areaOfEffect != null && areaOfEffect.contains(grid.getSelectedLocation(), currentGridPoint)){
+					color = this.aoeTileColor;
 				}
 				this.fill(this.getTileRectangle(x, y), color);
 			}

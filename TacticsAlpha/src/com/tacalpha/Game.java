@@ -10,6 +10,7 @@ import com.tacalpha.actor.Actor;
 import com.tacalpha.equip.LongSword;
 import com.tacalpha.grid.Direction;
 import com.tacalpha.grid.Grid;
+import com.tacalpha.grid.RadiusAOE;
 import com.tacalpha.grid.Tile;
 import com.tacalpha.input.InputHelper;
 import com.tacalpha.input.InputRepeatHelper;
@@ -123,6 +124,7 @@ public class Game {
 						this.currentActor = this.grid.getSelectedTile().getOccupant();
 						this.state = GameState.ATTACKING;
 						this.grid.setTargetAdjacentSquares(this.grid.getSelectedLocation());
+						this.grid.setAreaOfEffect(new RadiusAOE(1));
 						this.message = "Attacking. Press ENTER to choose your target or ESC to cancel.";
 						this.showMessage = true;
 						break;
@@ -163,8 +165,7 @@ public class Game {
 					this.message = "Cannot move there.";
 				}
 			} else if (this.state.equals(GameState.ATTACKING)) {
-				Actor target = this.grid.getSelectedTile().getOccupant();
-				if (target != null) {
+				for (Actor target : this.grid.getTargetsOfCurrentEffect()) {
 					int attackerStrength = this.currentActor.getStrength();
 					int targetDefense = target.getDefense();
 					double baseDamage = attackerStrength * (this.random.nextDouble() / 2.0 + 0.9);
@@ -202,7 +203,7 @@ public class Game {
 		this.message = null;
 		this.showMessage = false;
 		this.currentActor = null;
-		this.grid.clearTargetRestrictions();
+		this.grid.clearTargetingLayer();
 		this.state = GameState.INPUT;
 	}
 
