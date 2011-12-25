@@ -12,6 +12,7 @@ import java.util.Set;
 import com.tacalpha.Game;
 import com.tacalpha.actor.Actor;
 import com.tacalpha.equip.Equipment;
+import com.tacalpha.equip.Slot;
 import com.tacalpha.grid.Grid;
 import com.tacalpha.grid.GridPoint;
 import com.tacalpha.grid.Tile;
@@ -205,17 +206,17 @@ public class ScreenRenderer extends Component {
 		// Equipment
 		int rightColumnPadding = this.actorSpace.getHorizontalCenter() + barNumberAreaWidth + 25;
 		this.graphics.drawString("EQUIPMENT", rightColumnPadding, this.actorSpace.top + fontHeight);
-		Equipment temp = actor.getEquipment(Equipment.Slot.MAINHAND);
+		Equipment temp = actor.getEquipment(Slot.MAINHAND);
 		this.graphics.drawString("RH: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 2));
-		temp = actor.getEquipment(Equipment.Slot.OFFHAND);
+		temp = actor.getEquipment(Slot.OFFHAND);
 		this.graphics.drawString("LH: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 3));
-		temp = actor.getEquipment(Equipment.Slot.HEAD);
+		temp = actor.getEquipment(Slot.HEAD);
 		this.graphics.drawString("HD: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 4));
-		temp = actor.getEquipment(Equipment.Slot.BODY);
+		temp = actor.getEquipment(Slot.BODY);
 		this.graphics.drawString("BD: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 5));
-		temp = actor.getEquipment(Equipment.Slot.FEET);
+		temp = actor.getEquipment(Slot.FEET);
 		this.graphics.drawString("FT: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 6));
-		temp = actor.getEquipment(Equipment.Slot.OTHER);
+		temp = actor.getEquipment(Slot.OTHER);
 		this.graphics.drawString("AC: " + (temp == null ? "Empty" : temp.getName()), rightColumnPadding, this.actorSpace.top + (fontHeight * 7));
 
 		// Current/Total Bars

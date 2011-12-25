@@ -157,32 +157,25 @@ public class Game {
 					this.activeMenu = new BattleActionMenu();
 				}
 			} else if (this.state.equals(GameState.MOVING)) {
-				if (this.grid.getTargetTiles().contains(this.grid.getSelectedLocation())) {
-					if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
-						this.clearGameState();
-					} else {
-						this.message = "Cannot move there.";
-					}
-				} else {
-					this.message = "Cannot move that far.";
-				}
-
-			} else if (this.state.equals(GameState.ATTACKING)) {
-				if (this.grid.getTargetTiles().contains(this.grid.getSelectedLocation())) {
-					Actor target = this.grid.getSelectedTile().getOccupant();
-					if (target != null) {
-						int attackerStrength = this.currentActor.getStrength();
-						int targetDefense = target.getDefense();
-						double baseDamage = attackerStrength * (this.random.nextDouble() / 2.0 + 0.9);
-						int damage = (int) (baseDamage * (100.0 / (100.0 + targetDefense)));
-						target.damage(damage);
-						if (target.getCurrentHealth() <= 0) {
-							this.actors.remove(target);
-							this.grid.getTile(target.getLocation()).setOccupant(null);
-						}
-					}
+				if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
 					this.clearGameState();
+				} else {
+					this.message = "Cannot move there.";
 				}
+			} else if (this.state.equals(GameState.ATTACKING)) {
+				Actor target = this.grid.getSelectedTile().getOccupant();
+				if (target != null) {
+					int attackerStrength = this.currentActor.getStrength();
+					int targetDefense = target.getDefense();
+					double baseDamage = attackerStrength * (this.random.nextDouble() / 2.0 + 0.9);
+					int damage = (int) (baseDamage * (100.0 / (100.0 + targetDefense)));
+					target.damage(damage);
+					if (target.getCurrentHealth() <= 0) {
+						this.actors.remove(target);
+						this.grid.getTile(target.getLocation()).setOccupant(null);
+					}
+				}
+				this.clearGameState();
 			}
 		} else if (this.escHelper.state()) {
 			if (this.state.equals(GameState.MOVING)) {
