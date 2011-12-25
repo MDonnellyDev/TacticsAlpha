@@ -8,6 +8,7 @@ import com.tacalpha.actor.Actor;
 
 public class Grid {
 	private final Tile[][] tiles;
+	private Set<GridPoint> targetableTiles;
 	public final int width;
 	public final int height;
 
@@ -108,12 +109,16 @@ public class Grid {
 		return this.tiles[location.getRow()][location.getColumn()].getOccupant();
 	}
 
+	public Set<GridPoint> getTargetTiles() {
+		return this.targetableTiles;
+	}
+
 	/**
 	 * Search for all tiles that can be accessed starting at the centerPoint and
 	 * moving radius or less.
 	 */
-	public Set<GridPoint> getMoveRadius(GridPoint centerPoint, int radius) {
-		Set<GridPoint> results = new HashSet<GridPoint>();
+	public void setMoveRadius(GridPoint centerPoint, int radius) {
+		this.targetableTiles = new HashSet<GridPoint>();
 
 		class SearchInfo {
 			public GridPoint location;
@@ -137,7 +142,7 @@ public class Grid {
 			int movement = info.movementLeft;
 
 			// Add the current square to the acceptable squares
-			results.add(test);
+			this.targetableTiles.add(test);
 
 			// If we have movement left
 			if (movement > 0) {
@@ -149,7 +154,7 @@ public class Grid {
 				if (this.isInBounds(x - 1, y)) {
 					if (!this.tiles[y][x - 1].isImpassable()) {
 						GridPoint target = new GridPoint(x - 1, y);
-						if (!results.contains(target)) {
+						if (!this.targetableTiles.contains(target)) {
 							toVisit.add(new SearchInfo(target, movement - 1));
 						}
 					}
@@ -157,7 +162,7 @@ public class Grid {
 				if (this.isInBounds(x + 1, y)) {
 					if (!this.tiles[y][x + 1].isImpassable()) {
 						GridPoint target = new GridPoint(x + 1, y);
-						if (!results.contains(target)) {
+						if (!this.targetableTiles.contains(target)) {
 							toVisit.add(new SearchInfo(target, movement - 1));
 						}
 					}
@@ -165,7 +170,7 @@ public class Grid {
 				if (this.isInBounds(x, y - 1)) {
 					if (!this.tiles[y - 1][x].isImpassable()) {
 						GridPoint target = new GridPoint(x, y - 1);
-						if (!results.contains(target)) {
+						if (!this.targetableTiles.contains(target)) {
 							toVisit.add(new SearchInfo(target, movement - 1));
 						}
 					}
@@ -173,33 +178,35 @@ public class Grid {
 				if (this.isInBounds(x, y + 1)) {
 					if (!this.tiles[y + 1][x].isImpassable()) {
 						GridPoint target = new GridPoint(x, y + 1);
-						if (!results.contains(target)) {
+						if (!this.targetableTiles.contains(target)) {
 							toVisit.add(new SearchInfo(target, movement - 1));
 						}
 					}
 				}
 			}
 		}
-		return results;
 	}
 
-	public Set<GridPoint> getAdjacentSquares(GridPoint location) {
-		Set<GridPoint> results = new HashSet<GridPoint>();
+	public void setTargetAdjacentSquares(GridPoint location) {
+		this.targetableTiles = new HashSet<GridPoint>();
 		int x = location.getColumn();
 		int y = location.getRow();
 		if (this.isInBounds(x - 1, y)) {
-			results.add(new GridPoint(x - 1, y));
+			this.targetableTiles.add(new GridPoint(x - 1, y));
 		}
 		if (this.isInBounds(x + 1, y)) {
-			results.add(new GridPoint(x + 1, y));
+			this.targetableTiles.add(new GridPoint(x + 1, y));
 		}
 		if (this.isInBounds(x, y - 1)) {
-			results.add(new GridPoint(x, y - 1));
+			this.targetableTiles.add(new GridPoint(x, y - 1));
 		}
 		if (this.isInBounds(x, y + 1)) {
-			results.add(new GridPoint(x, y + 1));
+			this.targetableTiles.add(new GridPoint(x, y + 1));
 		}
-		return results;
+	}
+
+	public void clearTargetRestrictions() {
+		this.targetableTiles = null;
 	}
 
 	private boolean isInBounds(int x, int y) {

@@ -75,7 +75,7 @@ public class ScreenRenderer extends Component {
 		this.tileSize = game.getTileSize();
 
 		// Grid
-		this.renderGrid(grid, game.getTargetLocations());
+		this.renderGrid(grid);
 		this.renderActors(actors);
 
 		// Menu and Info
@@ -103,11 +103,12 @@ public class ScreenRenderer extends Component {
 		this.tileSize = 50;
 	}
 
-	private void renderGrid(Grid grid, Set<GridPoint> targetLocations) {
+	private void renderGrid(Grid grid) {
 		this.fill(this.gridSpace, this.screenBackgroundColor);
 		Tile[][] tiles = grid.getTiles();
 		GridPoint selectedLocation = grid.getSelectedLocation();
 		this.calculateGridOffset(grid, selectedLocation);
+		Set<GridPoint> targetLocations = grid.getTargetTiles();
 		for (int y = 0; y < grid.height; y++) {
 			for (int x = 0; x < grid.width; x++) {
 				Tile tile = tiles[y][x];

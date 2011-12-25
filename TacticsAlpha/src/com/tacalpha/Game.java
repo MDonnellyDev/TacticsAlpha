@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import com.tacalpha.actor.Actor;
 import com.tacalpha.equip.LongSword;
 import com.tacalpha.grid.Direction;
 import com.tacalpha.grid.Grid;
-import com.tacalpha.grid.GridPoint;
 import com.tacalpha.grid.Tile;
 import com.tacalpha.input.InputHelper;
 import com.tacalpha.input.InputRepeatHelper;
@@ -39,7 +37,6 @@ public class Game {
 	private Actor currentActor;
 	private Menu activeMenu;
 	private GameState state;
-	private Set<GridPoint> targetLocations;
 
 	// Player Display stuff
 	private String message;
@@ -118,14 +115,14 @@ public class Game {
 					case MOVE:
 						this.currentActor = this.grid.getSelectedTile().getOccupant();
 						this.state = GameState.MOVING;
-						this.targetLocations = this.grid.getMoveRadius(this.grid.getSelectedLocation(), this.currentActor.getMoveSpeed());
+						this.grid.setMoveRadius(this.grid.getSelectedLocation(), this.currentActor.getMoveSpeed());
 						this.message = "Moving. Press ENTER to place or ESC to cancel.";
 						this.showMessage = true;
 						break;
 					case ATTACK:
 						this.currentActor = this.grid.getSelectedTile().getOccupant();
 						this.state = GameState.ATTACKING;
-						this.targetLocations = this.grid.getAdjacentSquares(this.grid.getSelectedLocation());
+						this.grid.setTargetAdjacentSquares(this.grid.getSelectedLocation());
 						this.message = "Attacking. Press ENTER to choose your target or ESC to cancel.";
 						this.showMessage = true;
 						break;
@@ -160,7 +157,7 @@ public class Game {
 					this.activeMenu = new BattleActionMenu();
 				}
 			} else if (this.state.equals(GameState.MOVING)) {
-				if (this.targetLocations.contains(this.grid.getSelectedLocation())) {
+				if (this.grid.getTargetTiles().contains(this.grid.getSelectedLocation())) {
 					if (this.grid.moveActorIfPossible(this.currentActor, this.grid.getSelectedLocation())) {
 						this.clearGameState();
 					} else {
@@ -171,7 +168,7 @@ public class Game {
 				}
 
 			} else if (this.state.equals(GameState.ATTACKING)) {
-				if (this.targetLocations.contains(this.grid.getSelectedLocation())) {
+				if (this.grid.getTargetTiles().contains(this.grid.getSelectedLocation())) {
 					Actor target = this.grid.getSelectedTile().getOccupant();
 					if (target != null) {
 						int attackerStrength = this.currentActor.getStrength();
@@ -212,7 +209,7 @@ public class Game {
 		this.message = null;
 		this.showMessage = false;
 		this.currentActor = null;
-		this.targetLocations = null;
+		this.grid.clearTargetRestrictions();
 		this.state = GameState.INPUT;
 	}
 
@@ -236,9 +233,5 @@ public class Game {
 
 	public int getTileSize() {
 		return this.tileSize;
-	}
-
-	public Set<GridPoint> getTargetLocations() {
-		return this.targetLocations;
 	}
 }
