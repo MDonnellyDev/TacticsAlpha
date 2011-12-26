@@ -4,13 +4,14 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
+import java.util.Set;
 
 import com.tacalpha.actor.Actor;
+import com.tacalpha.battle.BasicAttack;
+import com.tacalpha.battle.Effect;
 import com.tacalpha.equip.LongSword;
 import com.tacalpha.grid.Direction;
 import com.tacalpha.grid.Grid;
-import com.tacalpha.grid.RadiusAOE;
 import com.tacalpha.grid.Tile;
 import com.tacalpha.input.InputHelper;
 import com.tacalpha.input.InputRepeatHelper;
@@ -36,6 +37,7 @@ public class Game {
 	private Grid grid;
 	private List<Actor> actors;
 	private Actor currentActor;
+	private Effect currentEffect;
 	private Menu activeMenu;
 	private GameState state;
 
@@ -45,7 +47,6 @@ public class Game {
 
 	// Meta Information
 	private int tileSize;
-	private final Random random = new Random();
 
 	public Game() {
 		// TODO: Temporary testing code.
@@ -122,9 +123,10 @@ public class Game {
 						break;
 					case ATTACK:
 						this.currentActor = this.grid.getSelectedTile().getOccupant();
+						this.currentEffect = new BasicAttack(this.currentActor);
+						this.currentEffect.setupTargeting(this.grid);
+						this.grid.setAreaOfEffect(this.currentEffect.getAreaOfEffect());
 						this.state = GameState.ATTACKING;
-						this.grid.setTargetAdjacentSquares(this.grid.getSelectedLocation());
-						this.grid.setAreaOfEffect(new RadiusAOE(1));
 						this.message = "Attacking. Press ENTER to choose your target or ESC to cancel.";
 						this.showMessage = true;
 						break;
@@ -165,12 +167,9 @@ public class Game {
 					this.message = "Cannot move there.";
 				}
 			} else if (this.state.equals(GameState.ATTACKING)) {
-				for (Actor target : this.grid.getTargetsOfCurrentEffect()) {
-					int attackerStrength = this.currentActor.getStrength();
-					int targetDefense = target.getDefense();
-					double baseDamage = attackerStrength * (this.random.nextDouble() / 2.0 + 0.9);
-					int damage = (int) (baseDamage * (100.0 / (100.0 + targetDefense)));
-					target.damage(damage);
+				Set<Actor> targets = this.grid.getTargetsOfCurrentEffect();
+				this.currentEffect.applyEffect(targets);
+				for (Actor target : targets) {
 					if (target.getCurrentHealth() <= 0) {
 						this.actors.remove(target);
 						this.grid.getTile(target.getLocation()).setOccupant(null);
@@ -203,6 +202,7 @@ public class Game {
 		this.message = null;
 		this.showMessage = false;
 		this.currentActor = null;
+		this.currentEffect = null;
 		this.grid.clearTargetingLayer();
 		this.state = GameState.INPUT;
 	}
