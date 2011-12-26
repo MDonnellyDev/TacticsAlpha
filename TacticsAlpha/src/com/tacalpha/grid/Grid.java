@@ -192,22 +192,16 @@ public class Grid {
 		}
 	}
 
-	public void setTargetAdjacentSquares(GridPoint location) {
+	public void setTargetAdjacentSquares(GridPoint location, int radius) {
 		this.targetableTiles = new HashSet<GridPoint>();
-		this.targetableTiles.add(location);
-		int x = location.getColumn();
-		int y = location.getRow();
-		if (this.isInBounds(x - 1, y)) {
-			this.targetableTiles.add(new GridPoint(x - 1, y));
-		}
-		if (this.isInBounds(x + 1, y)) {
-			this.targetableTiles.add(new GridPoint(x + 1, y));
-		}
-		if (this.isInBounds(x, y - 1)) {
-			this.targetableTiles.add(new GridPoint(x, y - 1));
-		}
-		if (this.isInBounds(x, y + 1)) {
-			this.targetableTiles.add(new GridPoint(x, y + 1));
+		radius = radius - 1;
+		for (int x = this.currentXPosition - radius; x <= this.currentXPosition + radius; x++) {
+			int leftover = radius - Math.abs(this.currentXPosition - x);
+			for (int y = this.currentYPosition - leftover; y <= this.currentYPosition + leftover; y++) {
+				if (this.isInBounds(x, y)) {
+					this.targetableTiles.add(new GridPoint(x, y));
+				}
+			}
 		}
 	}
 
