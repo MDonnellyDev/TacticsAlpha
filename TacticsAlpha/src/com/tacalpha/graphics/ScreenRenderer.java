@@ -103,7 +103,6 @@ public class ScreenRenderer extends Component {
 				+ ScreenRenderer.TEXT_SPACING, this.textSpace.right - ScreenRenderer.TEXT_SPACING, this.textSpace.top + 50 - ScreenRenderer.TEXT_SPACING);
 		this.actorSpace = new Rectangle(this.messageSpace.left, this.textSpace.top + 50 + ScreenRenderer.TEXT_SPACING, this.textSpace.right
 				- ScreenRenderer.TEXT_SPACING, this.textSpace.bottom - ScreenRenderer.TEXT_SPACING);
-		this.tileSize = 50;
 	}
 
 	private void renderGrid(Grid grid) {
@@ -124,7 +123,7 @@ public class ScreenRenderer extends Component {
 				if (selectedLocation.matches(x, y)) {
 					color = this.selectedTileColor;
 				}
-				if(areaOfEffect != null && areaOfEffect.contains(grid.getSelectedLocation(), currentGridPoint)){
+				if (areaOfEffect != null && areaOfEffect.contains(grid.getSelectedLocation(), currentGridPoint)) {
 					color = this.aoeTileColor;
 				}
 				this.fill(this.getTileRectangle(x, y), color);
