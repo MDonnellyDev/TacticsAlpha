@@ -7,6 +7,7 @@ public class RadiusAOE extends AreaOfEffect {
 	protected Set<GridPoint> relativeLocations = new HashSet<GridPoint>();
 
 	public RadiusAOE(int radius) {
+		radius = radius - 1;
 		for (int x = -radius; x <= radius; x++) {
 			int leftover = radius - Math.abs(x);
 			for (int y = -leftover; y <= leftover; y++) {
