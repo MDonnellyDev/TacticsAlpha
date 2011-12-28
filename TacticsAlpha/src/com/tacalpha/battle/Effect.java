@@ -8,14 +8,23 @@ import com.tacalpha.grid.Grid;
 
 public abstract class Effect {
 	protected final Actor source;
+	protected int mpCost = 0;
 
-	protected Effect(Actor source) {
+	protected Effect(Actor source, Grid grid) {
 		this.source = source;
+		this.setupTargeting(grid);
+		grid.setAreaOfEffect(this.getAreaOfEffect());
 	}
 
-	public abstract void applyEffect(Collection<Actor> targets);
+	public void applyEffect(Collection<Actor> targets) {
+		if (this.source.spendMpIfAble(this.mpCost)) {
+			this.doApply(targets);
+		}
+	}
 
-	public abstract AreaOfEffect getAreaOfEffect();
+	protected abstract void doApply(Collection<Actor> targets);
 
-	public abstract void setupTargeting(Grid grid);
+	protected abstract AreaOfEffect getAreaOfEffect();
+
+	protected abstract void setupTargeting(Grid grid);
 }

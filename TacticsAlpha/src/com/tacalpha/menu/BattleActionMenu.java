@@ -2,13 +2,13 @@ package com.tacalpha.menu;
 
 public class BattleActionMenu extends Menu {
 	public static enum Action {
-		MOVE, DELETE, ATTACK, CANCEL;
+		MOVE, ATTACK, CAST, CANCEL;
 	}
 
 	public BattleActionMenu() {
 		this.addOption("Move");
 		this.addOption("Attack");
-		this.addOption("Delete");
+		this.addOption("Spell");
 		this.addOption("Cancel");
 	}
 
@@ -20,7 +20,7 @@ public class BattleActionMenu extends Menu {
 			case 1:
 				return Action.ATTACK;
 			case 2:
-				return Action.DELETE;
+				return Action.CAST;
 			case 3:
 			default:
 				return Action.CANCEL;

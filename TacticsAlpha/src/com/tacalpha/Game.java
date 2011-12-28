@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.tacalpha.actor.Actor;
 import com.tacalpha.battle.BasicAttack;
+import com.tacalpha.battle.Cure;
 import com.tacalpha.battle.Effect;
 import com.tacalpha.equip.LongSword;
 import com.tacalpha.grid.Direction;
@@ -123,16 +124,17 @@ public class Game {
 						break;
 					case ATTACK:
 						this.currentActor = this.grid.getSelectedTile().getOccupant();
-						this.currentEffect = new BasicAttack(this.currentActor);
-						this.currentEffect.setupTargeting(this.grid);
-						this.grid.setAreaOfEffect(this.currentEffect.getAreaOfEffect());
+						this.currentEffect = new BasicAttack(this.currentActor, this.grid);
 						this.state = GameState.ATTACKING;
 						this.message = "Attacking. Press ENTER to choose your target or ESC to cancel.";
 						this.showMessage = true;
 						break;
-					case DELETE:
-						this.actors.remove(this.grid.getSelectedTile().getOccupant());
-						this.grid.removeSelectedActor();
+					case CAST:
+						this.currentActor = this.grid.getSelectedTile().getOccupant();
+						this.currentEffect = new Cure(this.currentActor, this.grid);
+						this.state = GameState.ATTACKING;
+						this.message = "Casting Cure!";
+						this.showMessage = true;
 						break;
 					case CANCEL:
 					default:
