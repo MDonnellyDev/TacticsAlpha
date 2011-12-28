@@ -150,6 +150,14 @@ public class Actor {
 		}
 	}
 
+	public boolean spendMpIfAble(int amount) {
+		if (this.currentMana < amount) {
+			return false;
+		}
+		this.currentMana -= amount;
+		return true;
+	}
+
 	public int getCurrentHealth() {
 		return this.currentHealth;
 	}

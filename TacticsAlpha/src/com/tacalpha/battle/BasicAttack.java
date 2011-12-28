@@ -11,12 +11,12 @@ import com.tacalpha.grid.RadiusAOE;
 public class BasicAttack extends Effect {
 	private Random random = new Random();
 
-	public BasicAttack(Actor source) {
-		super(source);
+	public BasicAttack(Actor source, Grid grid) {
+		super(source, grid);
 	}
 
 	@Override
-	public void applyEffect(Collection<Actor> targets) {
+	public void doApply(Collection<Actor> targets) {
 		for (Actor target : targets) {
 			int attackerStrength = this.source.getStrength();
 			int targetDefense = target.getDefense();
